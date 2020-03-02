@@ -1,6 +1,9 @@
 import sudokuboards as sb
 import performance_test as perf
 
+#char meaning the spot is empty 
+emp = sb.emp
+
 #the constMarker is for constant values that CANNOT be changed by the algorithm
 constMarker = '$'
 
@@ -23,13 +26,13 @@ def sudokuSolve(board):
         squares = pullNumSquares(board)
 
         #if it isn't taken by a constant num
-        if board[rowI][elementI] == sb.emp or board[rowI][elementI] in possibleNums:
+        if board[rowI][elementI] == emp or board[rowI][elementI] in possibleNums:
 
             #if it had already reached 9 before and it cannot increment further
             if board[rowI][elementI] == '9':
                 
                 #reset the spot
-                board[rowI][elementI] = sb.emp
+                board[rowI][elementI] = emp
 
                 #backtrack to the last available spot
                 newCoords = bactrackCoordinates(rowI,elementI,board)
@@ -70,7 +73,7 @@ def sudokuSolve(board):
                     elif (num == 9):
 
                         #reset the spot
-                        board[rowI][elementI] = sb.emp
+                        board[rowI][elementI] = emp
 
                         #backtrack to the last available spot
                         newCoords = bactrackCoordinates(rowI,elementI,board)
@@ -150,7 +153,7 @@ def bactrackCoordinates(rowI, elementI, board):
 #it's to set the lower bound to check for nums
 def currentNumIncremented(rowI, elementI, board):
 
-    if board[rowI][elementI] == sb.emp:
+    if board[rowI][elementI] == emp:
 
         return 1
 
@@ -205,7 +208,7 @@ def pullNumHorizontals(board):
     #pretty much copies the board without blank spaces and const markers
     horizontals = [{element.replace(constMarker, '')
                     for element in row
-                    if element != sb.emp}
+                    if element != emp}
                    for row in board]
 
     return horizontals
@@ -220,7 +223,7 @@ def pullNumVerticals(board):
     for elNum in range(len(board)):
         for rowNum in range(len(board)):
             #adds only nums to save time
-            if board[rowNum][elNum] != sb.emp:
+            if board[rowNum][elNum] != emp:
                 verticals[elNum].add(board[rowNum][elNum].replace(constMarker, ''))
 
     return verticals
@@ -238,7 +241,7 @@ def pullNumSquares(board):
         for y in range(squareY - 3, squareY):
             for x in range(squareX - 3, squareX):
                 #adds only nums to save time
-                if board[x][y] != sb.emp:
+                if board[x][y] != emp:
                     squares[squareNum].add(board[x][y].replace(constMarker, ''))
 
         squareX += 3
@@ -254,7 +257,7 @@ def markConstants(board):
     
     for row in board:
         for element in row:
-            if element != sb.emp:
+            if element != emp:
                 board[board.index(row)][row.index(element)] += constMarker
 
     return board
@@ -264,7 +267,7 @@ def removeConstantMarks(board):
 
     for row in board:
         for element in row:
-            if element != sb.emp:
+            if element != emp:
                 board[board.index(row)][row.index(element)] = board[board.index(row)][row.index(element)].replace(constMarker, '')
 
     return board
