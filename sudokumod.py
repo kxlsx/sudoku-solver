@@ -7,16 +7,22 @@ emp = sb.emp
 #the constMarker is for constant values that CANNOT be changed by the algorithm
 constMarker = '$'
 
-#all nums the algorithm can use <1;9>
-possibleNums = tuple([str(i)
-                     for i in range(1,10)])
-
-
 #main 
 def sudokuSolve(board):
 
+    #general checks if the board is valid for sudoku
+    if len(board) % 3 != 0 or len(board) == 0:
+        raise Exception("The board's size must be a positive multiple of 3")
+    elif not(isBoardSquare(board)):
+        raise Exception("The board's row count and length must be uniform")
+
     board = markConstants(board)
+
     maxBoardIndex = len(board) - 1
+    maxBoardRange = len(board) + 1
+
+    possibleNums = tuple([str(i)
+                     for i in range(1, maxBoardRange)])
 
     rowI = elementI = 0
     while True:
@@ -29,7 +35,7 @@ def sudokuSolve(board):
         if board[rowI][elementI] == emp or board[rowI][elementI] in possibleNums:
 
             #if it had already reached 9 before and it cannot increment further
-            if board[rowI][elementI] == '9':
+            if board[rowI][elementI] == possibleNums[-1]:
                 
                 #reset the spot
                 board[rowI][elementI] = emp
@@ -47,12 +53,12 @@ def sudokuSolve(board):
             else:
                 
                 #go through all nums <the current one + 1; 9>
-                for num in range(currentNumIncremented(rowI, elementI, board), 10):
+                for num in range(currentNumIncremented(rowI, elementI, board), maxBoardRange):
                     
                     #if the num isn't already on the horizontal or vertical line or in a square
                     if ((str(num) not in horizontals[rowI])
                     and (str(num) not in verticals[elementI])
-                    and (str(num) not in squares[squareNum(rowI, elementI)])):
+                    and (str(num) not in squares[squareNum(rowI, elementI, len(board))])):
 
                         #set the first available num on the spot
                         board[rowI][elementI] = str(num)
@@ -70,7 +76,7 @@ def sudokuSolve(board):
                         break
                     
                     #if none of the spots are available 
-                    elif (num == 9):
+                    elif (num == maxBoardRange - 1):
 
                         #reset the spot
                         board[rowI][elementI] = emp
@@ -117,6 +123,8 @@ def forwardCoordinates(rowI, elementI, maxBoardIndex):
 #returns a tuple of the last, previous, available coordinates (0 = rowI, 1 = elementI)
 def bactrackCoordinates(rowI, elementI, board):
 
+    maxBoardIndex = len(board) - 1
+
     #go back a spot (if it's the first one, go up a row)
     elementI -= 1
     if elementI < 0:
@@ -128,7 +136,7 @@ def bactrackCoordinates(rowI, elementI, board):
 
         #it goes to the last spot of the previous row (it moves through the board like a snake)
         else:
-            elementI = 8
+            elementI = maxBoardIndex
                                                
     #while the current element it's checking is a constant
     #DOESN'T WORK PROPERLY i.e. doesn't work at all
@@ -145,7 +153,7 @@ def bactrackCoordinates(rowI, elementI, board):
 
             #it goes to the last spot of the previous row (it moves through the board like a snake)
             else:
-                elementI = 8
+                elementI = maxBoardIndex
     
     return (rowI, elementI)
 
@@ -157,7 +165,7 @@ def currentNumIncremented(rowI, elementI, board):
 
         return 1
 
-    elif board[rowI][elementI] == '9':
+    elif board[rowI][elementI] == str(len(board)):
 
         return int(board[rowI][elementI])
 
@@ -165,42 +173,27 @@ def currentNumIncremented(rowI, elementI, board):
 
         return int(board[rowI][elementI]) + 1
 
-#returns the square's, in which are the given coordinates, number (currently works only with board 9x9)
-def squareNum(rowI, elementI):
+#returns the square's index (check pullNumSquares), in which are the given coordinates, number (currently works only with board 9x9)
+def squareNum(rowI, elementI, boardLen):
 
-    if rowI < 3:
+    squareSize = int(boardLen / 3)
+    squareMaxYs = tuple(filter(lambda x: x % 3 == 0, range(3, boardLen + 1)))
+    squareMaxXs = tuple(filter(lambda x: x % squareSize == 0, range(squareSize, boardLen + 1)))
 
-        if elementI < 3:
-            return 0
+    base = 0
+    for maxY in squareMaxYs:
 
-        elif elementI < 6:
-            return 3
+        if rowI < maxY:
+            
+            mod = 0
+            for maxX in squareMaxXs:
 
-        elif elementI < 9:
-            return 6
+                if elementI < maxX:
+                    return base + mod
 
-    elif rowI < 6:
+                mod += squareSize
 
-        if elementI < 3:
-            return 1
-
-        elif elementI < 6:
-            return 4
-
-        elif elementI < 9:
-            return 7
-
-    elif rowI < 9:
-
-        if elementI < 3:
-            return 2
-
-        elif elementI < 6:
-            return 5
-
-        elif elementI < 9:
-            return 8
-
+        base+=1
 
 #returns all nums in corresponding horizontal lines 
 def pullNumHorizontals(board):
@@ -231,7 +224,9 @@ def pullNumVerticals(board):
 #returns all nums in corresponding squares (3x3) 
 def pullNumSquares(board):
 
-    squareX = squareY = 3
+    squareSize = int(len(board) / 3)
+    squareY = 3
+    squareX = squareSize
 
     #empty list the same size as the board but filled with empty sets
     squares = [set()
@@ -239,17 +234,26 @@ def pullNumSquares(board):
 
     for squareNum in range(len(board)):
         for y in range(squareY - 3, squareY):
-            for x in range(squareX - 3, squareX):
+            for x in range(squareX - squareSize, squareX):
                 #adds only nums to save time
                 if board[x][y] != emp:
                     squares[squareNum].add(board[x][y].replace(constMarker, ''))
 
-        squareX += 3
+        squareX += squareSize
         if squareX > len(board):
             squareX = int(len(board)/3)
             squareY += 3
 
     return squares
+
+
+#checks whether the board's length is the same as each row's length 
+def isBoardSquare(board):
+    for row in board:
+        if len(board) != len(row):
+            return False
+
+    return True
 
 
 #returns a board with the nums coming pre-set marked with constMarker
@@ -272,7 +276,7 @@ def removeConstantMarks(board):
 
     return board
 
-def printBoard(*boards, empty_spot_char='0'):
+def printBoard(*boards, empty_spot_char='-'):
 
     i = 0
     for board in boards:
