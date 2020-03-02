@@ -12,9 +12,9 @@ def sudokuSolve(board):
 
     #general checks if the board is valid for sudoku
     if len(board) % 3 != 0 or len(board) == 0:
-        raise Exception("The board's size must be a positive multiple of 3")
+        raise Exception("Board's size must be a positive multiple of 3")
     elif not(isBoardSquare(board)):
-        raise Exception("The board's row count and length must be uniform")
+        raise Exception("Board's row count and row length must be uniform")
 
     board = markConstants(board)
 
@@ -249,11 +249,17 @@ def pullNumSquares(board):
 
 #checks whether the board's length is the same as each row's length 
 def isBoardSquare(board):
-    for row in board:
-        if len(board) != len(row):
-            return False
 
-    return True
+    try:
+
+        for row in board:
+           if len(board) != len(row):
+                return False
+
+        return True
+
+    except:
+        raise Exception('Board must be two-dimensional')
 
 
 #returns a board with the nums coming pre-set marked with constMarker
