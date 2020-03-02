@@ -288,8 +288,3 @@ def printBoard(*boards, empty_spot_char='0'):
             print()
             
         i+=1
-
-
-printBoard(sudokuSolve(sb.boards[8]), sudokuSolve(sb.boards[1]), sudokuSolve(sb.boards[2]))
-#print(perf.func_perf(sudokuSolve, sb.boards[8]))
-
