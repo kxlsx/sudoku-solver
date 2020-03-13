@@ -1,5 +1,5 @@
 import sudokuboards as sb
-import performance_test as perf
+from copy import deepcopy
 
 #char meaning the spot is empty 
 emp = sb.emp
@@ -8,18 +8,23 @@ emp = sb.emp
 constMarker = '$'
 
 #main 
-def sudokuSolve(board):
+def sudokuSolve(board, copy_board=True):
+
+    if work_on_copy:
+        brd = deepcopy(board)
+    else:
+        brd = board
 
     #general checks if the board is valid for sudoku
-    if len(board) % 3 != 0 or len(board) == 0:
+    if len(brd) % 3 != 0 or len(brd) == 0:
         raise Exception("Board's size must be a positive multiple of 3")
-    elif not(isBoardSquare(board)):
+    elif not(isBoardSquare(brd)):
         raise Exception("Board's row count and row length must be uniform")
 
-    board = markConstants(board)
+    brd = markConstants(brd)
 
-    maxBoardIndex = len(board) - 1
-    maxBoardRange = len(board) + 1
+    maxBoardIndex = len(brd) - 1
+    maxBoardRange = len(brd) + 1
 
     possibleNums = tuple([str(i)
                      for i in range(1, maxBoardRange)])
@@ -27,21 +32,21 @@ def sudokuSolve(board):
     rowI = elementI = 0
     while True:
         
-        horizontals = pullNumHorizontals(board)
-        verticals = pullNumVerticals(board)
-        squares = pullNumSquares(board)
+        horizontals = pullNumHorizontals(brd)
+        verticals = pullNumVerticals(brd)
+        squares = pullNumSquares(brd)
 
         #if it isn't taken by a constant num
-        if board[rowI][elementI] == emp or board[rowI][elementI] in possibleNums:
+        if brd[rowI][elementI] == emp or brd[rowI][elementI] in possibleNums:
 
             #if it had already reached 9 before and it cannot increment further
-            if board[rowI][elementI] == possibleNums[-1]:
+            if brd[rowI][elementI] == possibleNums[-1]:
                 
                 #reset the spot
-                board[rowI][elementI] = emp
+                brd[rowI][elementI] = emp
 
                 #backtrack to the last available spot
-                newCoords = bactrackCoordinates(rowI,elementI,board)
+                newCoords = bactrackCoordinates(rowI, elementI, brd)
                 if newCoords == None:
 
                     #the board cannot be solved
@@ -53,22 +58,22 @@ def sudokuSolve(board):
             else:
                 
                 #go through all nums <the current one + 1; 9>
-                for num in range(currentNumIncremented(rowI, elementI, board), maxBoardRange):
+                for num in range(currentNumIncremented(rowI, elementI, brd), maxBoardRange):
                     
                     #if the num isn't already on the horizontal or vertical line or in a square
                     if ((str(num) not in horizontals[rowI])
                     and (str(num) not in verticals[elementI])
-                    and (str(num) not in squares[squareNum(rowI, elementI, len(board))])):
+                    and (str(num) not in squares[squareNum(rowI, elementI, len(brd))])):
 
                         #set the first available num on the spot
-                        board[rowI][elementI] = str(num)
+                        brd[rowI][elementI] = str(num)
 
                         #go forward a spot
                         newCoords = forwardCoordinates(rowI, elementI, maxBoardIndex)
                         if newCoords == None:
 
                             #final return (with the markers deleted for good measure)
-                            return removeConstantMarks(board)
+                            return removeConstantMarks(brd)
 
                         rowI     = newCoords[0]
                         elementI = newCoords[1]
@@ -79,10 +84,10 @@ def sudokuSolve(board):
                     elif (num == maxBoardRange - 1):
 
                         #reset the spot
-                        board[rowI][elementI] = emp
+                        brd[rowI][elementI] = emp
 
                         #backtrack to the last available spot
-                        newCoords = bactrackCoordinates(rowI,elementI,board)
+                        newCoords = bactrackCoordinates(rowI, elementI, brd)
                         if newCoords == None:
 
                             #the board cannot be solved
@@ -99,7 +104,7 @@ def sudokuSolve(board):
             if newCoords == None:
 
                 #final return (with the markers deleted for good measure)
-                return removeConstantMarks(board)
+                return removeConstantMarks(brd)
 
             rowI     = newCoords[0]
             elementI = newCoords[1]
@@ -283,6 +288,9 @@ def removeConstantMarks(board):
     return board
 
 def printBoard(*boards, empty_spot_char='-'):
+
+    if boards == None:
+        print('No Solution')
 
     i = 0
     for board in boards:
