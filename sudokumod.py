@@ -10,7 +10,7 @@ constMarker = '$'
 #main 
 def sudokuSolve(board, copy_board=True):
 
-    if work_on_copy:
+    if copy_board:
         brd = deepcopy(board)
     else:
         brd = board
