@@ -1,14 +1,11 @@
-import sudokuboards
+from sudokuboards import boards9, boards12, generate_board_from_api, emp
 from copy import deepcopy
-
-#char meaning the spot is empty 
-emp = sudokuboards.emp
 
 #the constMarker is for constant values that CANNOT be changed by the algorithm
 constMarker = '$'
 
 #main 
-def sudokuSolve(board, copy_board=True):
+def sudoku_solve(board, copy_board=True):
 
     if copy_board:
         brd = deepcopy(board)
@@ -18,10 +15,10 @@ def sudokuSolve(board, copy_board=True):
     #general checks if the board is valid for sudoku
     if len(brd) % 3 != 0 or len(brd) == 0:
         raise Exception("Board's size must be a positive multiple of 3")
-    elif not(isBoardSquare(brd)):
+    elif not(is_board_square(brd)):
         raise Exception("Board's row count and row length must be uniform")
 
-    brd = markConstants(brd)
+    brd = mark_constants(brd)
 
     maxBoardIndex = len(brd) - 1
     maxBoardRange = len(brd) + 1
@@ -32,9 +29,9 @@ def sudokuSolve(board, copy_board=True):
     rowI = elementI = 0
     while True:
         
-        horizontals = pullNumHorizontals(brd)
-        verticals = pullNumVerticals(brd)
-        squares = pullNumSquares(brd)
+        horizontals = get_horizontal_nums(brd)
+        verticals = get_vertical_nums(brd)
+        squares = get_nums_in_squares(brd)
 
         #if it isn't taken by a constant num
         if brd[rowI][elementI] == emp or brd[rowI][elementI] in possibleNums:
@@ -46,7 +43,7 @@ def sudokuSolve(board, copy_board=True):
                 brd[rowI][elementI] = emp
 
                 #backtrack to the last available spot
-                newCoords = bactrackCoordinates(rowI, elementI, brd)
+                newCoords = get_bactrack_coordinates(rowI, elementI, brd)
                 if newCoords == None:
 
                     #the board cannot be solved
@@ -58,22 +55,22 @@ def sudokuSolve(board, copy_board=True):
             else:
                 
                 #go through all nums <the current one + 1; 9>
-                for num in range(currentNumIncremented(rowI, elementI, brd), maxBoardRange):
+                for num in range(get_current_num_incremented(rowI, elementI, brd), maxBoardRange):
                     
                     #if the num isn't already on the horizontal or vertical line or in a square
                     if ((str(num) not in horizontals[rowI])
                     and (str(num) not in verticals[elementI])
-                    and (str(num) not in squares[squareNum(rowI, elementI, len(brd))])):
+                    and (str(num) not in squares[get_square_num(rowI, elementI, len(brd))])):
 
                         #set the first available num on the spot
                         brd[rowI][elementI] = str(num)
 
                         #go forward a spot
-                        newCoords = forwardCoordinates(rowI, elementI, maxBoardIndex)
+                        newCoords = get_forward_coordinates(rowI, elementI, maxBoardIndex)
                         if newCoords == None:
 
                             #final return (with the markers deleted for good measure)
-                            return removeConstantMarks(brd)
+                            return remove_constant_marks(brd)
 
                         rowI     = newCoords[0]
                         elementI = newCoords[1]
@@ -87,7 +84,7 @@ def sudokuSolve(board, copy_board=True):
                         brd[rowI][elementI] = emp
 
                         #backtrack to the last available spot
-                        newCoords = bactrackCoordinates(rowI, elementI, brd)
+                        newCoords = get_bactrack_coordinates(rowI, elementI, brd)
                         if newCoords == None:
 
                             #the board cannot be solved
@@ -100,18 +97,18 @@ def sudokuSolve(board, copy_board=True):
         else:
             
             #go forward a spot
-            newCoords = forwardCoordinates(rowI, elementI, maxBoardIndex)
+            newCoords = get_forward_coordinates(rowI, elementI, maxBoardIndex)
             if newCoords == None:
 
                 #final return (with the markers deleted for good measure)
-                return removeConstantMarks(brd)
+                return remove_constant_marks(brd)
 
             rowI     = newCoords[0]
             elementI = newCoords[1]
 
 
 #returns a tuple of the next coordinates on the board (0 = rowI, 1 = elementI)
-def forwardCoordinates(rowI, elementI, maxBoardIndex):
+def get_forward_coordinates(rowI, elementI, maxBoardIndex):
 
     #go to the next spot (if it's the last one, go down a row)
     elementI += 1
@@ -126,7 +123,7 @@ def forwardCoordinates(rowI, elementI, maxBoardIndex):
     return (rowI, elementI)
 
 #returns a tuple of the last, previous, available coordinates (0 = rowI, 1 = elementI)
-def bactrackCoordinates(rowI, elementI, board):
+def get_bactrack_coordinates(rowI, elementI, board):
 
     maxBoardIndex = len(board) - 1
 
@@ -164,7 +161,7 @@ def bactrackCoordinates(rowI, elementI, board):
 
 
 #it's to set the lower bound to check for nums
-def currentNumIncremented(rowI, elementI, board):
+def get_current_num_incremented(rowI, elementI, board):
 
     if board[rowI][elementI] == emp:
 
@@ -178,8 +175,8 @@ def currentNumIncremented(rowI, elementI, board):
 
         return int(board[rowI][elementI]) + 1
 
-#returns the square's index (check pullNumSquares), in which are the given coordinates, number (currently works only with board 9x9)
-def squareNum(rowI, elementI, boardLen):
+#returns the square's index (check get_nums_in_squares), in which are the given coordinates, number (currently works only with board 9x9)
+def get_square_num(rowI, elementI, boardLen):
 
     squareSize = int(boardLen / 3)
     squareMaxYs = tuple(filter(lambda x: x % 3 == 0, range(3, boardLen + 1)))
@@ -201,7 +198,7 @@ def squareNum(rowI, elementI, boardLen):
         base+=1
 
 #returns all nums in corresponding horizontal lines 
-def pullNumHorizontals(board):
+def get_horizontal_nums(board):
     
     #pretty much copies the board without blank spaces and const markers
     horizontals = [{element.replace(constMarker, '')
@@ -212,7 +209,7 @@ def pullNumHorizontals(board):
     return horizontals
 
 #returns all nums in corresponding vertical lines 
-def pullNumVerticals(board):
+def get_vertical_nums(board):
 
     #empty list the same size as the board but filled with empty lists|
     verticals = [set()
@@ -227,7 +224,7 @@ def pullNumVerticals(board):
     return verticals
 
 #returns all nums in corresponding squares (3x3) 
-def pullNumSquares(board):
+def get_nums_in_squares(board):
 
     squareSize = int(len(board) / 3)
     squareY = 3
@@ -253,7 +250,7 @@ def pullNumSquares(board):
 
 
 #checks whether the board's length is the same as each row's length 
-def isBoardSquare(board):
+def is_board_square(board):
 
     try:
 
@@ -268,7 +265,7 @@ def isBoardSquare(board):
 
 
 #returns a board with the nums coming pre-set marked with constMarker
-def markConstants(board):
+def mark_constants(board):
     
     for row in board:
         for element in row:
@@ -278,7 +275,7 @@ def markConstants(board):
     return board
 
 #returns a board with the constMarkers removed if i'll ever need it
-def removeConstantMarks(board):
+def remove_constant_marks(board):
 
     for row in board:
         for element in row:
@@ -287,7 +284,7 @@ def removeConstantMarks(board):
 
     return board
 
-def printBoard(*boards, empty_spot_char='-'):
+def print_board(*boards, empty_spot_char='-'):
 
     if boards == None:
         print('No Solution')
