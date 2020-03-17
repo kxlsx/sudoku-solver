@@ -163,6 +163,7 @@ boards12=(
 #https://github.com/berto/sugoku - thanks berto!
 boardGeneratorApiURL = 'https://sugoku.herokuapp.com/board'
 
+#difficulties = easy, medium, hard
 def generate_board_from_api(difficulty='medium'):
     generatedBoard = get_data_from_json_site(boardGeneratorApiURL, params={'difficulty': difficulty})['board']
 
