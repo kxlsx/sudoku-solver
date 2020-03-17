@@ -1,8 +1,8 @@
-import sudokuboards as sb
+import sudokuboards
 from copy import deepcopy
 
 #char meaning the spot is empty 
-emp = sb.emp
+emp = sudokuboards.emp
 
 #the constMarker is for constant values that CANNOT be changed by the algorithm
 constMarker = '$'
