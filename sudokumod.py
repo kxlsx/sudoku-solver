@@ -175,7 +175,8 @@ def get_current_num_incremented(rowI, elementI, board):
 
         return int(board[rowI][elementI]) + 1
 
-#returns the square's index (check get_nums_in_squares), in which are the given coordinates, number (currently works only with board 9x9)
+#returns the square's index, in which are the given coordinates 
+#squares are marked vertically (left corner square is index 0, and the one below it is index 1)
 def get_square_num(rowI, elementI, boardLen):
 
     squareSize = int(boardLen / 3)
@@ -197,7 +198,7 @@ def get_square_num(rowI, elementI, boardLen):
 
         base+=1
 
-#returns all nums in corresponding horizontal lines 
+#returns a list of nums in corresponding horizontal lines 
 def get_horizontal_nums(board):
     
     #pretty much copies the board without blank spaces and const markers
@@ -208,7 +209,7 @@ def get_horizontal_nums(board):
 
     return horizontals
 
-#returns all nums in corresponding vertical lines 
+#returns a list of nums in corresponding vertical lines 
 def get_vertical_nums(board):
 
     #empty list the same size as the board but filled with empty lists|
@@ -223,7 +224,7 @@ def get_vertical_nums(board):
 
     return verticals
 
-#returns all nums in corresponding squares (3x3) 
+#returns a list of nums in corresponding(check explanation above get_square_num) squares (3x3) 
 def get_nums_in_squares(board):
 
     squareSize = int(len(board) / 3)
