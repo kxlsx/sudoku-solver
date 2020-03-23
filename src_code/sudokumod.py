@@ -7,7 +7,7 @@ emp = sudokuboards.emp
 #the constMarker is for constant values that CANNOT be changed by the algorithm
 constMarker = '$'
 
-#main 
+#main sudoku-solver 
 def sudoku_solve(board, copy_board=True):
 
     if copy_board:
@@ -109,6 +109,113 @@ def sudoku_solve(board, copy_board=True):
             rowI     = newCoords[0]
             elementI = newCoords[1]
 
+#sudoku-solver but it yields the board every time it places or removes a num
+def step_by_step_sudoku_solve(board, copy_board=True):
+
+    if copy_board:
+        brd = deepcopy(board)
+    else:
+        brd = board
+
+    #general checks if the board is valid for sudoku
+    if len(brd) % 3 != 0 or len(brd) == 0:
+        raise Exception("Board's size must be a positive multiple of 3")
+    elif not(is_board_square(brd)):
+        raise Exception("Board's row count and row length must be uniform")
+
+    brd = mark_constants(brd)
+
+    maxBoardIndex = len(brd) - 1
+    maxBoardRange = len(brd) + 1
+
+    possibleNums = tuple([str(i)
+                     for i in range(1, maxBoardRange)])
+
+    rowI = elementI = 0
+    while True:
+        
+        horizontals = get_horizontal_nums(brd)
+        verticals = get_vertical_nums(brd)
+        squares = get_nums_in_squares(brd)
+
+        #if it isn't taken by a constant num
+        if brd[rowI][elementI] == emp or brd[rowI][elementI] in possibleNums:
+
+            #if it had already reached 9 before and it cannot increment further
+            if brd[rowI][elementI] == possibleNums[-1]:
+                
+                #reset the spot
+                brd[rowI][elementI] = emp
+                yield (remove_constant_marks(brd), False)
+
+                #backtrack to the last available spot
+                newCoords = get_bactrack_coordinates(rowI, elementI, brd)
+                if newCoords == None:
+
+                    #the board cannot be solved
+                    yield None
+                    return
+
+                rowI     = newCoords[0]
+                elementI = newCoords[1]
+
+            else:
+                
+                #go through all nums <the current one + 1; 9>
+                for num in range(get_current_num_incremented(rowI, elementI, brd), maxBoardRange):
+                    
+                    #if the num isn't already on the horizontal or vertical line or in a square
+                    if ((str(num) not in horizontals[rowI])
+                    and (str(num) not in verticals[elementI])
+                    and (str(num) not in squares[get_square_num(rowI, elementI, len(brd))])):
+
+                        #set the first available num on the spot
+                        brd[rowI][elementI] = str(num)
+                        yield (remove_constant_marks(brd), True)
+
+                        #go forward a spot
+                        newCoords = get_forward_coordinates(rowI, elementI, maxBoardIndex)
+                        if newCoords == None:
+
+                            #final return (with the markers deleted for good measure)
+                            yield (remove_constant_marks(brd), True)
+                            return
+
+                        rowI     = newCoords[0]
+                        elementI = newCoords[1]
+
+                        break
+                    
+                    #if none of the spots are available 
+                    elif (num == maxBoardRange - 1):
+
+                        #reset the spot
+                        brd[rowI][elementI] = emp
+                        yield (remove_constant_marks(brd), False)
+
+                        #backtrack to the last available spot
+                        newCoords = get_bactrack_coordinates(rowI, elementI, brd)
+                        if newCoords == None:
+
+                            #the board cannot be solved
+                            return
+
+                        rowI     = newCoords[0]
+                        elementI = newCoords[1]
+
+        #if it's a constant num
+        else:
+            
+            #go forward a spot
+            newCoords = get_forward_coordinates(rowI, elementI, maxBoardIndex)
+            if newCoords == None:
+
+                #final return (with the markers deleted for good measure)
+                return remove_constant_marks(brd)
+
+            rowI     = newCoords[0]
+            elementI = newCoords[1]
+
 #prints the board to the console
 def print_board(*boards):
 
@@ -133,6 +240,33 @@ def print_board(*boards):
             
         i+=1
 
+#prints every step (board) of the algorithm solving the board
+def print_solving_step_by_step(board):
+
+    print_board(board)
+    print('Going forward...')
+
+    solveStepByStep = step_by_step_sudoku_solve(board)
+
+    while True:
+        try:
+            step  = next(solveStepByStep)
+        except StopIteration:
+            print('Done!')
+            break
+        else:
+            try:
+                print_board(step[0])
+            except TypeError:
+                print('No solution!')
+                break
+            else:
+                if step[1]:
+                    print('Going forward...')
+                else:
+                    print('Going back...')
+                
+                print()
 
 
 #returns a tuple of the next coordinates on the board (0 = rowI, 1 = elementI)
