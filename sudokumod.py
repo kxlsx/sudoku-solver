@@ -1,5 +1,8 @@
-from sudokuboards import boards9, boards12, generate_board_from_api, emp
+import sudokuboards
 from copy import deepcopy
+
+#char meaning the spot is empty
+emp = sudokuboards.emp
 
 #the constMarker is for constant values that CANNOT be changed by the algorithm
 constMarker = '$'
@@ -105,6 +108,31 @@ def sudoku_solve(board, copy_board=True):
 
             rowI     = newCoords[0]
             elementI = newCoords[1]
+
+#prints the board to the console
+def print_board(*boards):
+
+    if boards == None:
+        print('No Solution')
+
+    i = 0
+    for board in boards:
+
+        if i != 0:
+            print()
+        
+        if board == None:
+            return None
+
+        for row in board:
+            for element in row:
+                if not(element):
+                    print(emp, end='')
+                print(element.replace(constMarker,'') + '  ', end='')
+            print()
+            
+        i+=1
+
 
 
 #returns a tuple of the next coordinates on the board (0 = rowI, 1 = elementI)
@@ -284,26 +312,3 @@ def remove_constant_marks(board):
                 board[board.index(row)][row.index(element)] = board[board.index(row)][row.index(element)].replace(constMarker, '')
 
     return board
-
-def print_board(*boards, empty_spot_char='-'):
-
-    if boards == None:
-        print('No Solution')
-
-    i = 0
-    for board in boards:
-
-        if i != 0:
-            print()
-        
-        if board == None:
-            return None
-
-        for row in board:
-            for element in row:
-                if not(element):
-                    print(empty_spot_char, end='')
-                print(element.replace(constMarker,'') + '  ', end='')
-            print()
-            
-        i+=1
