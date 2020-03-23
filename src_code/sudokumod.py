@@ -446,5 +446,3 @@ def remove_constant_marks(board):
                 board[board.index(row)][row.index(element)] = board[board.index(row)][row.index(element)].replace(constMarker, '')
 
     return board
-
-print_solving_step_by_step(sudokuboards.generate_board_from_api(difficulty='easy'))
