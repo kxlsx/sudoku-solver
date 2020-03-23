@@ -1,6 +1,6 @@
 # sudoku-solver
 Simple sudoku solver in python using the <i>backtracking algorithm</i><br/>
-(currently only text based (working on it) and doesn't seem to work on boards larger than 9x9<br/><br/>
+(currently only text based (working on it) and doesn't seem to work on boards larger than 9x9)<br/><br/>
 <i><b>src_code:</b></i><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>sudokumod.py</b>    -> module containing methods to solve sudoku or print it to the console<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>sudokuOOP.py</b>    -> a version of sudokumod, but inside a class SudokuBoard containing the given board and a function solving or printing it (the other stuff as well but it's private)<br/>
