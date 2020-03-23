@@ -7,6 +7,7 @@ class SudokuBoard:
     def __init__(self, board, emptySpotChar=sudokuboards.emp, constMarker='$'):
 
         self.board = board
+        self.__boardBackup__ = deepcopy(board)
 
         #general checks if the board is valid for sudoku
         if len(self.board) % 3 != 0 or len(self.board) == 0:
@@ -19,6 +20,7 @@ class SudokuBoard:
 
         #the constMarker is for constant values that CANNOT be changed by the algorithm
         self.__constMarker__ = constMarker
+
 
     #solves the board 
     def solve(self, copyBoard=False):
@@ -219,18 +221,7 @@ class SudokuBoard:
 
     #prints the board to the console
     def print_board(self):
-        
-        board = self.board
-
-        if board == None:
-            print('No Solution')
-          
-        for row in board:
-            for element in row:
-                if not(element):
-                    print(self.__emp__, end='')
-                print(element.replace(self.__constMarker__,'') + '  ', end='')
-            print()
+        self.__print_any_board__(self.board)
 
     #prints every step (board) of the algorithm solving the board
     def print_solving_step_by_step(self, copyBoard=False):
@@ -261,6 +252,10 @@ class SudokuBoard:
                         print('Going back...')
                     
                     print() 
+
+    #resets the board to the initial state
+    def reset_board(self):
+        self.board = deepcopy(self.__boardBackup__)
 
 
     def __print_any_board__(self, board):
