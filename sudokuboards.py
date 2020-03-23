@@ -1,4 +1,4 @@
-from takeJsonmod import get_data_from_json_site
+from requestsJsonmod import get_data_from_json_site
 
 #char meaning 'empty cell'
 emp='0'
