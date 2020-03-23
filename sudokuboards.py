@@ -1,7 +1,23 @@
 from takeJsonmod import get_data_from_json_site
 
 #char meaning 'empty cell'
-emp=''
+emp='0'
+
+#https://github.com/berto/sugoku - thanks berto!
+boardGeneratorApiURL = 'https://sugoku.herokuapp.com/board'
+
+#difficulties = easy, medium, hard
+def generate_board_from_api(difficulty='medium'):
+    generatedBoard = get_data_from_json_site(boardGeneratorApiURL, params={'difficulty': difficulty})['board']
+
+    for row in generatedBoard:
+        for element in row:
+            if element == 0:
+                generatedBoard[generatedBoard.index(row)][row.index(element)] = emp
+            else:
+                generatedBoard[generatedBoard.index(row)][row.index(element)] = str(element)
+
+    return tuple(generatedBoard)
 
 #9x9 boards
 boards9=(    
@@ -159,19 +175,3 @@ boards12=(
                 
             ),
         )
-
-#https://github.com/berto/sugoku - thanks berto!
-boardGeneratorApiURL = 'https://sugoku.herokuapp.com/board'
-
-#difficulties = easy, medium, hard
-def generate_board_from_api(difficulty='medium'):
-    generatedBoard = get_data_from_json_site(boardGeneratorApiURL, params={'difficulty': difficulty})['board']
-
-    for row in generatedBoard:
-        for element in row:
-            if element == 0:
-                generatedBoard[generatedBoard.index(row)][row.index(element)] = emp
-            else:
-                generatedBoard[generatedBoard.index(row)][row.index(element)] = str(element)
-
-    return tuple(generatedBoard)
