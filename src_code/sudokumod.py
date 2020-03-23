@@ -8,9 +8,9 @@ emp = sudokuboards.emp
 constMarker = '$'
 
 #main sudoku-solver 
-def sudoku_solve(board, copy_board=True):
+def sudoku_solve(board, copyBoard=True):
 
-    if copy_board:
+    if copyBoard:
         brd = deepcopy(board)
     else:
         brd = board
@@ -110,9 +110,9 @@ def sudoku_solve(board, copy_board=True):
             elementI = newCoords[1]
 
 #sudoku-solver but it yields the board every time it places or removes a num
-def step_by_step_sudoku_solve(board, copy_board=True):
+def step_by_step_sudoku_solve(board, copyBoard=True):
 
-    if copy_board:
+    if copyBoard:
         brd = deepcopy(board)
     else:
         brd = board
