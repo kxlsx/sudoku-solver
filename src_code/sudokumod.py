@@ -177,8 +177,7 @@ def step_by_step_sudoku_solve(board, copy_board=True):
                         newCoords = get_forward_coordinates(rowI, elementI, maxBoardIndex)
                         if newCoords == None:
 
-                            #final return (with the markers deleted for good measure)
-                            yield (remove_constant_marks(brd), True)
+                            #board solved
                             return
 
                         rowI     = newCoords[0]
@@ -210,8 +209,9 @@ def step_by_step_sudoku_solve(board, copy_board=True):
             newCoords = get_forward_coordinates(rowI, elementI, maxBoardIndex)
             if newCoords == None:
 
-                #final return (with the markers deleted for good measure)
-                return remove_constant_marks(brd)
+                #board solved
+                yield (remove_constant_marks(brd), True)
+                return
 
             rowI     = newCoords[0]
             elementI = newCoords[1]
@@ -446,3 +446,5 @@ def remove_constant_marks(board):
                 board[board.index(row)][row.index(element)] = board[board.index(row)][row.index(element)].replace(constMarker, '')
 
     return board
+
+print_solving_step_by_step(sudokuboards.generate_board_from_api(difficulty='easy'))

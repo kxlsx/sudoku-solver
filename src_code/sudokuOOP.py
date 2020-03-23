@@ -21,9 +21,9 @@ class SudokuBoard:
         self.__constMarker__ = constMarker
 
     #solves the board 
-    def solve(self, copy_board=False):
+    def solve(self, copyBoard=False):
 
-        if copy_board:
+        if copyBoard:
             brd = deepcopy(self.board)
         else:
             brd = self.board
@@ -116,9 +116,110 @@ class SudokuBoard:
                 rowI     = newCoords[0]
                 elementI = newCoords[1]
     
+    #sudoku-solver but it yields the board every time it places or removes a num
+    def solve_step_by_step(self, copyBoard=False):
+
+        if copyBoard:
+            brd = deepcopy(self.board)
+        else:
+            brd = self.board
+
+        brd = self.__mark_constants__(brd)
+
+        maxBoardIndex = len(brd) - 1
+        maxBoardRange = len(brd) + 1
+
+        possibleNums = tuple([str(i)
+                        for i in range(1, maxBoardRange)])
+
+        rowI = elementI = 0
+        while True:
+            
+            horizontals = self.__get_horizontal_nums__(brd)
+            verticals = self.__get_vertical_nums__(brd)
+            squares = self.__get_nums_in_squares__(brd)
+
+            #if it isn't taken by a constant num
+            if brd[rowI][elementI] == self.__emp__ or brd[rowI][elementI] in possibleNums:
+
+                #if it had already reached 9 before and it cannot increment further
+                if brd[rowI][elementI] == possibleNums[-1]:
+                    
+                    #reset the spot
+                    brd[rowI][elementI] = self.__emp__
+                    yield (self.__remove_constant_marks__(brd), False)
+
+                    #backtrack to the last available spot
+                    newCoords = self.__get_bactrack_coordinates__(rowI, elementI, brd)
+                    if newCoords == None:
+
+                        #the board cannot be solved
+                        yield None
+                        return
+
+                    rowI     = newCoords[0]
+                    elementI = newCoords[1]
+
+                else:
+                    
+                    #go through all nums <the current one + 1; 9>
+                    for num in range(self.__get_current_num_incremented__(rowI, elementI, brd), maxBoardRange):
+                        
+                        #if the num isn't already on the horizontal or vertical line or in a square
+                        if ((str(num) not in horizontals[rowI])
+                        and (str(num) not in verticals[elementI])
+                        and (str(num) not in squares[self.__get_square_num__(rowI, elementI, len(brd))])):
+
+                            #set the first available num on the spot
+                            brd[rowI][elementI] = str(num)
+                            yield (self.__remove_constant_marks__(brd), True)
+
+                            #go forward a spot
+                            newCoords = self.__get_forward_coordinates__(rowI, elementI, maxBoardIndex)
+                            if newCoords == None:
+
+                                #board solved
+                                return
+
+                            rowI     = newCoords[0]
+                            elementI = newCoords[1]
+
+                            break
+                        
+                        #if none of the spots are available 
+                        elif (num == maxBoardRange - 1):
+
+                            #reset the spot
+                            brd[rowI][elementI] = self.__emp__
+                            yield (self.__remove_constant_marks__(brd), False)
+
+                            #backtrack to the last available spot
+                            newCoords = self.__get_bactrack_coordinates__(rowI, elementI, brd)
+                            if newCoords == None:
+
+                                #the board cannot be solved
+                                return
+
+                            rowI     = newCoords[0]
+                            elementI = newCoords[1]
+
+            #if it's a constant num
+            else:
+                
+                #go forward a spot
+                newCoords = self.__get_forward_coordinates__(rowI, elementI, maxBoardIndex)
+                if newCoords == None:
+
+                    #board solved
+                    yield (self.__remove_constant_marks__(brd), False)
+                    return
+
+                rowI     = newCoords[0]
+                elementI = newCoords[1]
+
     #prints the board to the console
     def print_board(self):
-
+        
         board = self.board
 
         if board == None:
@@ -131,6 +232,48 @@ class SudokuBoard:
                 print(element.replace(self.__constMarker__,'') + '  ', end='')
             print()
 
+    #prints every step (board) of the algorithm solving the board
+    def print_solving_step_by_step(self, copyBoard=False):
+        
+        board = self.board
+
+        self.__print_any_board__(board)
+        print('Going forward...')
+
+        solveStepByStep = self.solve_step_by_step(copyBoard)
+
+        while True:
+            try:
+                step  = next(solveStepByStep)
+            except StopIteration:
+                print('Done!')
+                break
+            else:
+                try:
+                    self.__print_any_board__(step[0])
+                except TypeError:
+                    print('No solution!')
+                    break
+                else:
+                    if step[1]:
+                        print('Going forward...')
+                    else:
+                        print('Going back...')
+                    
+                    print() 
+
+
+    def __print_any_board__(self, board):
+
+        if board == None:
+            print('No Solution')
+          
+        for row in board:
+            for element in row:
+                if not(element):
+                    print(self.__emp__, end='')
+                print(element.replace(self.__constMarker__,'') + '  ', end='')
+            print()
 
     #returns a tuple of the next coordinates on the board (0 = rowI, 1 = elementI)
     def __get_forward_coordinates__(self, rowI, elementI, maxBoardIndex):
