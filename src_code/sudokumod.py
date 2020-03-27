@@ -1,14 +1,46 @@
+"""
+Methods used to solve a sudoku board
+
+    Main methods:
+        sudoku_solve -- returns a solved board
+        step_by_step_sudoku_solve -- yields a board every time it adds something to it or backtracks, until it's solved
+        
+        print_board -- prints the board to the console
+        print_solving_step_by_step -- prints every consecutive step of solving the board
+"""
+
 import sudokuboards
 from copy import deepcopy
+from requestsJson import get_data_from_json_site
+from exceptions import *
+
 
 #char meaning the spot is empty
-emp = sudokuboards.emp
+emp = '0'
 
 #the constMarker is for constant values that CANNOT be changed by the algorithm
 constMarker = '$'
 
-#main sudoku-solver 
-def sudoku_solve(board, copyBoard=True):
+ 
+def sudoku_solve(board, copyBoard=True, correctWrongChars=False):
+    """
+    Solves the given board.
+        
+    Keyword Arguments:
+        copyBoard {bool} -- should the method work on a copied board and just return it (True)
+        or just work with the original (False) (default: {True})
+        correctWrongChars {bool} -- if True the method will mark every unknown char as emp
+        
+    Raises:
+        BoardError: Board's size must be a positive multiple of 3.
+        BoardError: Board's row count and row length must be uniform.
+    
+    Returns:
+        {a tuple of lists} -- the solved board
+        or
+        {None} -- if the board is unsolvable
+    """
+
 
     if copyBoard:
         brd = deepcopy(board)
@@ -17,17 +49,20 @@ def sudoku_solve(board, copyBoard=True):
 
     #general checks if the board is valid for sudoku
     if len(brd) % 3 != 0 or len(brd) == 0:
-        raise Exception("Board's size must be a positive multiple of 3")
+        raise BoardError("Board's size must be a positive multiple of 3.")
     elif not(is_board_square(brd)):
-        raise Exception("Board's row count and row length must be uniform")
+        raise BoardError("Board's row count and row length must be uniform.")
 
-    brd = mark_constants(brd)
 
     maxBoardIndex = len(brd) - 1
     maxBoardRange = len(brd) + 1
 
     possibleNums = tuple([str(i)
                      for i in range(1, maxBoardRange)])
+
+    brd = ensure_board_types(brd, correctWrongChars)
+    brd = mark_constants(brd)
+
 
     rowI = elementI = 0
     while True:
@@ -109,8 +144,25 @@ def sudoku_solve(board, copyBoard=True):
             rowI     = newCoords[0]
             elementI = newCoords[1]
 
-#sudoku-solver but it yields the board every time it places or removes a num
-def step_by_step_sudoku_solve(board, copyBoard=True):
+def step_by_step_sudoku_solve(board, copyBoard=True, correctWrongChars=False):
+    """
+    sudoku_solve but it yields the board every time it places or removes a num.
+        
+    Keyword Arguments:
+        copyBoard {bool} -- should the method work on a copied board and just return it (True)
+        or just work with the original (False) (default: {False})
+        correctWrongChars {bool} -- if True the method will mark every unknown char as emp
+    
+    Raises:
+        BoardError: Board's size must be a positive multiple of 3.
+        BoardError: Board's row count and row length must be uniform.
+        ArgumentError: constMarker cannot be empty.
+
+    Yields:
+        {a tuple containing a tuple of lists and a bool} -- board in the current step with the information if it went forward(True) or backtracked(False)
+        or
+        {None} -- if the board is unsolvable
+    """
 
     if copyBoard:
         brd = deepcopy(board)
@@ -123,13 +175,19 @@ def step_by_step_sudoku_solve(board, copyBoard=True):
     elif not(is_board_square(brd)):
         raise Exception("Board's row count and row length must be uniform")
 
-    brd = mark_constants(brd)
+    #the constMarker cannot be empty
+    if constMarker == '':
+        raise ArgumentError('constMarker cannot be empty.')
+
 
     maxBoardIndex = len(brd) - 1
     maxBoardRange = len(brd) + 1
 
     possibleNums = tuple([str(i)
                      for i in range(1, maxBoardRange)])
+
+    brd = ensure_board_types(brd, correctWrongChars)
+    brd = mark_constants(brd)
 
     rowI = elementI = 0
     while True:
@@ -216,8 +274,10 @@ def step_by_step_sudoku_solve(board, copyBoard=True):
             rowI     = newCoords[0]
             elementI = newCoords[1]
 
-#prints the board to the console
 def print_board(*boards):
+    """
+    Prints the given boards to the console
+    """
 
     if boards == None:
         print('No Solution')
@@ -240,8 +300,14 @@ def print_board(*boards):
             
         i+=1
 
-#prints every step (board) of the algorithm solving the board
 def print_solving_step_by_step(board):
+    """
+    Prints every step (board) of the algorithm solving the board.
+        
+    Keyword Arguments:
+        copyBoard {bool} -- should the method work on a copied board and just return it (True)
+        or just work with the original (False) (default: {True})
+    """
 
     print_board(board)
     print('Going forward...')
@@ -262,15 +328,54 @@ def print_solving_step_by_step(board):
                 break
             else:
                 if step[1]:
-                    print('Going forward...')
+                    print('Went forward.')
                 else:
-                    print('Going back...')
+                    print('Went back.')
                 
                 print()
 
+def generate_board_from_api(difficulty='medium'):
+        """
+        Generates a board (9x9) from berto's API (https://sugoku.herokuapp.com/board) and converts it to my board format
+    
+        Keyword Arguments:
+            difficulty {str} -- easy, medium or hard (default: {'medium'})
 
-#returns a tuple of the next coordinates on the board (0 = rowI, 1 = elementI)
+        Raises:
+            ArgumentError: Incorrect difficulty ('easy', 'medium' or 'hard').
+
+        Returns:
+            {tuple of lists} -- board converted to my format (9 lists in a tuple, each containing 9 elements)
+        """
+
+        difficulty = difficulty.lower()
+
+        if difficulty not in ('easy', 'medium', 'hard'):
+            raise ArgumentError("Incorrect difficulty ('easy', 'medium' or 'hard').")
+        
+        #https://github.com/berto/sugoku - thanks berto!
+        boardGeneratorApiURL = 'https://sugoku.herokuapp.com/board'
+
+        generatedBoard = get_data_from_json_site(boardGeneratorApiURL, params={'difficulty': difficulty})['board']
+
+        return tuple(generatedBoard)
+
+
+
 def get_forward_coordinates(rowI, elementI, maxBoardIndex):
+    """
+    Returns the next coordinates (as a tuple) or None
+    
+    Arguments:
+        rowI {int} -- index of the current row
+        elementI {int} -- index of the current element
+        maxBoardIndex {int} -- max index of the current board
+        
+    Returns:
+        {tuple} -- next coordinates on the board (row index, element index)
+        or
+        {None} -- the board is solved (the algorithm tried to go past the last element of the board)
+    """
 
     #go to the next spot (if it's the last one, go down a row)
     elementI += 1
@@ -284,8 +389,20 @@ def get_forward_coordinates(rowI, elementI, maxBoardIndex):
 
     return (rowI, elementI)
 
-#returns a tuple of the last, previous, available coordinates (0 = rowI, 1 = elementI)
 def get_bactrack_coordinates(rowI, elementI, board):
+    """
+    Returns the last available coordinates or None.
+
+    Arguments:
+        rowI {int} -- current row index
+        elementI {int} -- current element index
+        board {tuple of lists} -- current board
+        
+    Returns:
+        {tuple} -- last available coordinates (row index, element index)
+        or
+        {None} -- the board is unsolvable (the algorithm tried to backtrack past the first element)
+    """
 
     maxBoardIndex = len(board) - 1
 
@@ -321,9 +438,18 @@ def get_bactrack_coordinates(rowI, elementI, board):
     
     return (rowI, elementI)
 
-
-#it's to set the lower bound to check for nums
 def get_current_num_incremented(rowI, elementI, board):
+    """
+    It's used to set the lower bound to check for nums
+        
+    Arguments:
+        rowI {int} -- current row index
+        elementI {int} -- current element index
+        board {tuple of lists} -- current board
+        
+    Returns:
+        {int} -- num placed in the current element + 1 or 1 (if the element is empty) or max num of the board (if the num is equal to the max num) 
+    """
 
     if board[rowI][elementI] == emp:
 
@@ -337,9 +463,19 @@ def get_current_num_incremented(rowI, elementI, board):
 
         return int(board[rowI][elementI]) + 1
 
-#returns the square's index, in which are the given coordinates 
-#squares are marked vertically (left corner square is index 0, and the one below it is index 1)
 def get_square_num(rowI, elementI, boardLen):
+    """
+    Returns the square's index, in which are the given coordinates. 
+    Squares are marked vertically (left corner square is index 0, and the one below it is index 1).
+        
+    Arguments:
+        rowI {int} -- index of the current row
+        elementI {int} -- index of the current element
+        boardLen {int} -- length of the board
+        
+    Returns:
+        {int} -- index used to mark the squares in get_nums_in_squares
+    """
 
     squareSize = int(boardLen / 3)
     squareMaxYs = tuple(filter(lambda x: x % 3 == 0, range(3, boardLen + 1)))
@@ -360,19 +496,35 @@ def get_square_num(rowI, elementI, boardLen):
 
         base+=1
 
-#returns a list of nums in corresponding horizontal lines 
 def get_horizontal_nums(board):
-    
+    """
+    Returns a list of nums in corresponding horizontal lines.
+        
+    Arguments:
+        board {tuple of lists} -- current board
+        
+    Returns:
+        {tuple of sets} -- tuple contains sets of nums in corresponding rows
+    """
+
     #pretty much copies the board without blank spaces and const markers
     horizontals = [{element.replace(constMarker, '')
                     for element in row
                     if element != emp}
                    for row in board]
 
-    return horizontals
-
-#returns a list of nums in corresponding vertical lines 
+    return tuple(horizontals)
+ 
 def get_vertical_nums(board):
+    """
+    Returns a list of nums in corresponding vertical lines.
+        
+    Arguments:
+        board {tuple of lists} -- current board
+        
+    Returns:
+        {tuple of sets} -- tuple contains sets of nums in corresponding columns
+    """
 
     #empty list the same size as the board but filled with empty lists|
     verticals = [set()
@@ -384,10 +536,18 @@ def get_vertical_nums(board):
             if board[rowNum][elNum] != emp:
                 verticals[elNum].add(board[rowNum][elNum].replace(constMarker, ''))
 
-    return verticals
-
-#returns a list of nums in corresponding(check explanation above get_square_num) squares (3x3) 
+    return tuple(verticals)
+ 
 def get_nums_in_squares(board):
+    """
+    Returns a list of nums in corresponding (check docstring of get_square_num) squares. 
+        
+    Arguments:
+        board {tuple of lists} -- current board
+        
+    Returns:
+        {tuple of sets} -- tuple contains sets of nums in corresponding squares
+    """
 
     squareSize = int(len(board) / 3)
     squareY = 3
@@ -409,11 +569,22 @@ def get_nums_in_squares(board):
             squareX = int(len(board)/3)
             squareY += 3
 
-    return squares
+    return tuple(squares)
 
 
-#checks whether the board's length is the same as each row's length 
 def is_board_square(board):
+    """
+    Checks whether the board's length is the same as each row's length.
+        
+    Arguments:
+        board {a tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
+        
+    Raises:
+        BoardError: Board must be two-dimensional.
+        
+    Returns:
+        {bool}
+    """
 
     try:
 
@@ -426,10 +597,23 @@ def is_board_square(board):
     except:
         raise Exception('Board must be two-dimensional')
 
-
-#returns a board with the nums coming pre-set marked with constMarker
 def mark_constants(board):
-    
+    """
+    Returns a board with the nums coming pre-set marked with constMarker.
+        
+    Arguments:
+        board {a tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
+        
+    Raises:
+        ArgumentError: constMarker cannot be empty.
+
+    Returns:
+        {tuple of lists} -- board but the nums in it were marked
+    """
+
+    if constMarker == '':
+        raise ArgumentError('constMarker cannot be empty.')
+
     for row in board:
         for element in row:
             if element != emp:
@@ -437,8 +621,16 @@ def mark_constants(board):
 
     return board
 
-#returns a board with the constMarkers removed if i'll ever need it
 def remove_constant_marks(board):
+    """
+    Returns a board with the constMarkers removed if i'll ever need it.
+        
+    Arguments:
+        board {a tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
+        
+    Returns:
+        {tuple of lists} -- board but the marked nums are unmarked 
+    """
 
     for row in board:
         for element in row:
@@ -446,3 +638,53 @@ def remove_constant_marks(board):
                 board[board.index(row)][row.index(element)] = board[board.index(row)][row.index(element)].replace(constMarker, '')
 
     return board
+
+def ensure_board_types(board, correctWrongChars=False):
+    """
+    Ensures the board and its contents contain correct types of elements.
+        
+    Arguments:
+        board {a tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
+
+    Keyword Arguments:
+        correctWrongChars {bool} -- if True the method will mark every unknown char as emp
+        
+    Returns:
+        {a tuple of lists} -- corrected board
+
+    Raises:
+        BoardError: Unknown char in board. (if it encountered it while correctWrongChars is False)
+        ArgumentError: correctWrongChars must be boolean.
+    """
+
+    if not(isinstance(correctWrongChars, bool)):
+        raise ArgumentError('correctWrongChars must be boolean.')
+
+    possibleNums = tuple([str(i)
+                     for i in range(1, len(board) + 1)])
+
+    ensuredBoard = []
+    rowI = 0
+    elementI = 0
+    for row in board:
+
+        ensuredBoard.append(list(row))
+        for _ in row:
+
+            char = str(ensuredBoard[rowI][elementI])
+
+            if char not in possibleNums and char != emp:
+                    if correctWrongChars:
+                        char = emp
+                    else:
+                        raise BoardError('Unknown char in board.')
+
+            ensuredBoard[rowI][elementI] = char
+                
+            elementI += 1
+
+        rowI +=1
+        elementI = 0
+
+        
+    return tuple(ensuredBoard)
