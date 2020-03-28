@@ -336,7 +336,8 @@ def print_solving_step_by_step(board):
 
 def generate_board_from_api(difficulty='medium'):
         """
-        Generates a board (9x9) from berto's API (https://sugoku.herokuapp.com/board) and converts it to my board format
+        Generates a board (9x9) from berto's API (https://sugoku.herokuapp.com/board)
+            His emptySpotChars are '0'!
     
         Keyword Arguments:
             difficulty {str} -- easy, medium or hard (default: {'medium'})

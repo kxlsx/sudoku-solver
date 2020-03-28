@@ -10,7 +10,7 @@ from exceptions import *
 class SudokuBoard:
     """
     Object used to store and solve a given board (can also print it to the console).
-
+        
         Arguments:
             board {a tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
             or
@@ -75,7 +75,7 @@ class SudokuBoard:
                 raise ArgumentError("Incorrect board command (Try 'random', 'rand' or 'r' to generate a random board).")
         finally:
             #board backup is used to reset the board if needed
-            self.__boardBackup__ = deepcopy(board)
+            self.__boardBackup__ = deepcopy(self.board)
 
 
         #numbers that can be used in the board
@@ -91,6 +91,7 @@ class SudokuBoard:
 
         #ensuring the board elements types
         self.board = self.__ensure_board_types__(self.board, self.__correctWrongChars__)
+        self.__boardBackup__ = self.__ensure_board_types__(self.__boardBackup__, self.__correctWrongChars__)
 
 
         if constMarker == '':
@@ -377,7 +378,9 @@ class SudokuBoard:
 
     def _generate_board_from_api_(self, difficulty='medium'):
         """
-        Generates a board (9x9) from berto's API (https://sugoku.herokuapp.com/board) and converts it to my board format
+        Generates a board (9x9) from berto's API (https://sugoku.herokuapp.com/board)
+            His emptySpotChars are '0'!
+        
     
         Keyword Arguments:
             difficulty {str} -- easy, medium or hard (default: {'medium'})
@@ -724,3 +727,15 @@ class SudokuBoard:
 
         
         return tuple(ensuredBoard)
+
+if __name__ == '__main__':
+    brd = SudokuBoard('r', difficulty='easy', emptySpotChar='', correctWrongChars=True)
+
+    brd.print_board()
+    print(brd.difficulty)
+
+    brd.solve()
+    brd.print_board()
+    
+    brd.reset_board()
+    brd.print_board()
