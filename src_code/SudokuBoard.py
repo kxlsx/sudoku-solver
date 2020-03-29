@@ -5,6 +5,7 @@ Module containing the class SudokuBoard used to store, solve or print the given 
 from copy import deepcopy
 from requestsJson import get_data_from_json_site
 from exceptions import *
+import sudokuboards
 
 
 class SudokuBoard:
@@ -410,10 +411,28 @@ class SudokuBoard:
             print('No Solution')
           
         for row in board:
+            i = 0
             for element in row:
-                if not(element):
-                    print(self.__emp__, end='')
-                print(element.replace(self.__constMarker__,'') + '  ', end='')
+                                
+                pelement = element 
+
+                if len(board) > 9:
+                    if i == 0 and len(element) == 1:
+                        pelement = ' ' + pelement
+
+                try:
+                    if ((len(element) == 1 and len(row[i + 1]) == 1) or 
+                        (len(element) == 2 and len(row[i + 1]) == 1)):
+                        gap = 2 * ' '
+                    elif ((len(element) == 2 and len(row[i + 1]) == 2) or 
+                          (len(element) == 1 and len(row[i + 1]) == 2)):
+                        gap = ' '
+                except IndexError:
+                    gap = ''
+                
+                print(pelement.replace(self.__constMarker__,'') + gap, end='')
+
+                i+=1
             print()
 
 
@@ -520,35 +539,31 @@ class SudokuBoard:
     def __get_square_num__(self, rowI, elementI, boardLen):
         """
         Returns the square's index, in which are the given coordinates. 
-        Squares are marked vertically (left corner square is index 0, and the one below it is index 1).
-        
+        Squares are marked horizontally starting at the leftmost corner, heading rightwards
+            
         Arguments:
             rowI {int} -- index of the current row
             elementI {int} -- index of the current element
             boardLen {int} -- length of the board
-        
+            
         Returns:
-            {int} -- index used to mark the squares in __get_nums_in_squares__
+            {int} -- index used to mark the squares in get_nums_in_squares
         """
 
         squareSize = int(boardLen / 3)
         squareMaxYs = tuple(filter(lambda x: x % 3 == 0, range(3, boardLen + 1)))
         squareMaxXs = tuple(filter(lambda x: x % squareSize == 0, range(squareSize, boardLen + 1)))
 
-        base = 0
+        index = 0
         for maxY in squareMaxYs:
-
             if rowI < maxY:
-                
-                mod = 0
                 for maxX in squareMaxXs:
-
                     if elementI < maxX:
-                        return base + mod
-
-                    mod += squareSize
-
-            base+=1
+                        return index
+                    else:
+                        index += 1
+            else:
+                index += 3
 
     def __get_horizontal_nums__(self, board):
         """
@@ -594,7 +609,8 @@ class SudokuBoard:
 
     def __get_nums_in_squares__(self, board):
         """
-        Returns a list of nums in corresponding (check docstring of __get_square_num__) squares. 
+        Returns a list of nums in corresponding squares 
+        (they're marked horizontally starting at the leftmost corner, heading rightwards). 
         
         Arguments:
             board {tuple of lists} -- current board
@@ -602,7 +618,7 @@ class SudokuBoard:
         Returns:
             {tuple of sets} -- tuple contains sets of nums in corresponding squares
         """
-
+    
         squareSize = int(len(board) / 3)
         squareY = 3
         squareX = squareSize
@@ -615,8 +631,8 @@ class SudokuBoard:
             for y in range(squareY - 3, squareY):
                 for x in range(squareX - squareSize, squareX):
                     #adds only nums to save time
-                    if board[x][y] != self.__emp__:
-                        squares[squareNum].add(board[x][y].replace(self.__constMarker__, ''))
+                    if board[y][x] != self.__emp__:
+                        squares[squareNum].add(board[y][x].replace(self.__constMarker__, ''))
 
             squareX += squareSize
             if squareX > len(board):
@@ -727,3 +743,15 @@ class SudokuBoard:
 
         
         return tuple(ensuredBoard)
+
+#REMEMBER TO DELETE THIS WHILE SHARING
+if __name__ == '__main__':
+    brd = SudokuBoard(sudokuboards.boards12[1], difficulty='hard', emptySpotChar='-', correctWrongChars=True)
+
+    brd.print_board()
+    print(brd.difficulty)
+
+    brd.print_solving_step_by_step()
+    
+    brd.reset_board()
+    brd.print_board()

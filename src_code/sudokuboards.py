@@ -151,18 +151,18 @@ boards12=(
 
             #1
             (
-                [emp,emp,emp,'12',emp,'2',emp,emp,emp,emp,'11',emp],
-                [emp,emp,emp,'11','6',emp,emp,'4',emp,'2',emp,'7'],
-                [emp,'9',emp,'10',emp,emp,'7',emp,emp,'5',emp,emp],
-                ['9','10',emp,'3',emp,'4',emp,'5',emp,emp,'1',emp],
-                [emp,'2','7',emp,'8',emp,'6','9',emp,emp,emp,'3'],
-                [emp,emp,emp,'8',emp,emp,emp,emp,'5','11',emp,emp],
-                [emp,emp,'1','4',emp,emp,emp,emp,'12',emp,emp,emp],
-                ['5',emp,emp,emp,'4','12',emp,'6',emp,'7','8',emp],
-                [emp,'12',emp,emp,'10',emp,'5',emp,'9',emp,'3','1'],
-                [emp,emp,'8',emp,emp,'10',emp,emp,'1',emp,'4',emp],
-                ['3',emp,'12',emp,'11',emp,emp,'7','6',emp,emp,emp],
-                [emp,'4',emp,emp,emp,emp,'3',emp,'2',emp,emp,emp]
+                [emp ,emp ,emp ,'12',emp ,'2' ,emp ,emp ,emp ,emp ,'11',emp ],
+                [emp ,emp ,emp ,'11','6' ,emp ,emp ,'4' ,emp ,'2' ,emp ,'7' ],
+                [emp ,'9' ,emp ,'10',emp ,emp ,'7' ,emp ,emp ,'5' ,emp ,emp ],
+                ['9' ,'10',emp ,'3' ,emp ,'4' ,emp ,'5' ,emp ,emp ,'1' ,emp ],
+                [emp ,'2' ,'7' ,emp ,'8' ,emp ,'6' ,'9' ,emp ,emp ,emp ,'3' ],
+                [emp ,emp ,emp ,'8' ,emp ,emp ,emp ,emp ,'5' ,'11',emp ,emp ],
+                [emp ,emp ,'1' ,'4' ,emp ,emp ,emp ,emp ,'12',emp ,emp ,emp ],
+                ['5' ,emp ,emp ,emp ,'4' ,'12',emp ,'6' ,emp ,'7' ,'8' ,emp ],
+                [emp ,'12',emp ,emp ,'10',emp ,'5' ,emp ,'9' ,emp ,'3' ,'1' ],
+                [emp ,emp ,'8' ,emp ,emp ,'10',emp ,emp ,'1' ,emp ,'4' ,emp ],
+                ['3' ,emp ,'12',emp ,'11',emp ,emp ,'7' ,'6' ,emp ,emp ,emp ],
+                [emp ,'4' ,emp ,emp ,emp ,emp ,'3' ,emp ,'2' ,emp ,emp ,emp ]
                 
             ),
         )

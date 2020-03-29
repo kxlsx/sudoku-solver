@@ -13,6 +13,7 @@ import sudokuboards
 from copy import deepcopy
 from requestsJson import get_data_from_json_site
 from exceptions import *
+import sudokuboards
 
 
 #char meaning the spot is empty
@@ -274,31 +275,43 @@ def step_by_step_sudoku_solve(board, copyBoard=True, correctWrongChars=False):
             rowI     = newCoords[0]
             elementI = newCoords[1]
 
-def print_board(*boards):
-    """
-    Prints the given boards to the console
-    """
-
-    if boards == None:
-        print('No Solution')
-
-    i = 0
-    for board in boards:
-
-        if i != 0:
-            print()
+def print_board(board):
+        """
+        Prints the given board.
         
-        if board == None:
-            return None
+        Arguments:
+            board {tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
 
+        If board is None it prints No solution
+        """
+
+        if board == None:
+            print('No Solution')
+          
         for row in board:
+            i = 0
             for element in row:
-                if not(element):
-                    print(emp, end='')
-                print(element.replace(constMarker,'') + '  ', end='')
+                                
+                pelement = element 
+
+                if len(board) > 9:
+                    if i == 0 and len(element) == 1:
+                        pelement = ' ' + pelement
+
+                try:
+                    if ((len(element) == 1 and len(row[i + 1]) == 1) or 
+                        (len(element) == 2 and len(row[i + 1]) == 1)):
+                        gap = 2 * ' '
+                    elif ((len(element) == 2 and len(row[i + 1]) == 2) or 
+                          (len(element) == 1 and len(row[i + 1]) == 2)):
+                        gap = ' '
+                except IndexError:
+                    gap = ''
+                
+                print(pelement.replace(constMarker,'') + gap, end='')
+
+                i+=1
             print()
-            
-        i+=1
 
 def print_solving_step_by_step(board):
     """
@@ -467,7 +480,7 @@ def get_current_num_incremented(rowI, elementI, board):
 def get_square_num(rowI, elementI, boardLen):
     """
     Returns the square's index, in which are the given coordinates. 
-    Squares are marked vertically (left corner square is index 0, and the one below it is index 1).
+    Squares are marked horizontally starting at the leftmost corner, heading rightwards
         
     Arguments:
         rowI {int} -- index of the current row
@@ -482,20 +495,17 @@ def get_square_num(rowI, elementI, boardLen):
     squareMaxYs = tuple(filter(lambda x: x % 3 == 0, range(3, boardLen + 1)))
     squareMaxXs = tuple(filter(lambda x: x % squareSize == 0, range(squareSize, boardLen + 1)))
 
-    base = 0
+    index = 0
     for maxY in squareMaxYs:
-
         if rowI < maxY:
-            
-            mod = 0
             for maxX in squareMaxXs:
-
                 if elementI < maxX:
-                    return base + mod
-
-                mod += squareSize
-
-        base+=1
+                    return index
+                else:
+                    index += 1
+        else:
+            index += 3
+                
 
 def get_horizontal_nums(board):
     """
@@ -541,7 +551,8 @@ def get_vertical_nums(board):
  
 def get_nums_in_squares(board):
     """
-    Returns a list of nums in corresponding (check docstring of get_square_num) squares. 
+    Returns a list of nums in corresponding squares 
+    (they're marked horizontally starting at the leftmost corner, heading rightwards). 
         
     Arguments:
         board {tuple of lists} -- current board
@@ -549,7 +560,7 @@ def get_nums_in_squares(board):
     Returns:
         {tuple of sets} -- tuple contains sets of nums in corresponding squares
     """
-
+    
     squareSize = int(len(board) / 3)
     squareY = 3
     squareX = squareSize
@@ -562,8 +573,8 @@ def get_nums_in_squares(board):
         for y in range(squareY - 3, squareY):
             for x in range(squareX - squareSize, squareX):
                 #adds only nums to save time
-                if board[x][y] != emp:
-                    squares[squareNum].add(board[x][y].replace(constMarker, ''))
+                if board[y][x] != emp:
+                    squares[squareNum].add(board[y][x].replace(constMarker, ''))
 
         squareX += squareSize
         if squareX > len(board):
@@ -689,3 +700,7 @@ def ensure_board_types(board, correctWrongChars=False):
 
         
     return tuple(ensuredBoard)
+
+#REMEMBER TO DELETE THIS WHILE SHARING
+if __name__ == '__main__':
+    print_board(sudokuboards.boards12[1])
