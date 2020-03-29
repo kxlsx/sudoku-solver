@@ -743,15 +743,3 @@ class SudokuBoard:
 
         
         return tuple(ensuredBoard)
-
-#REMEMBER TO DELETE THIS WHILE SHARING
-if __name__ == '__main__':
-    brd = SudokuBoard(sudokuboards.boards12[1], difficulty='hard', emptySpotChar='-', correctWrongChars=True)
-
-    brd.print_board()
-    print(brd.difficulty)
-
-    brd.print_solving_step_by_step()
-    
-    brd.reset_board()
-    brd.print_board()
