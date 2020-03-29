@@ -700,7 +700,3 @@ def ensure_board_types(board, correctWrongChars=False):
 
         
     return tuple(ensuredBoard)
-
-#REMEMBER TO DELETE THIS WHILE SHARING
-if __name__ == '__main__':
-    print_board(sudokuboards.boards12[1])
