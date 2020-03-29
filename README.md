@@ -1,5 +1,5 @@
 # sudoku-solver
-Simple sudoku solver in python using the <i>backtracking algorithm</i>(a bit modified)<br/>
+Simple sudoku solver in python using the <i>backtracking algorithm</i> (a bit modified)<br/>
 (currently only text based (working on it))<br/><br/>
 <i><b>src_code:</b></i><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>sudokumod.py</b>    -> module containing methods to solve sudoku, print it to the console or generate it using this API: https://github.com/berto/sugoku<br/>
