@@ -68,10 +68,6 @@ def sudoku_solve(board, copyBoard=True, correctWrongChars=False):
     rowI = elementI = 0
     while True:
         
-        horizontals = get_horizontal_nums(brd)
-        verticals = get_vertical_nums(brd)
-        squares = get_nums_in_squares(brd)
-
         #if it isn't taken by a constant num
         if brd[rowI][elementI] == emp or brd[rowI][elementI] in possibleNums:
 
@@ -92,14 +88,22 @@ def sudoku_solve(board, copyBoard=True, correctWrongChars=False):
                 elementI = newCoords[1]
 
             else:
+
+                currentHorizontalNums = get_horizontal_nums(brd)[rowI]
+                currentVerticalNums = get_vertical_nums(brd)[elementI]
+                currentSquareNums = get_nums_in_squares(brd)[get_square_num(rowI, elementI, len(brd))]
+
+                bannedNums = currentHorizontalNums | currentVerticalNums | currentSquareNums
+
+                validNums = [num 
+                             for num in range(get_current_num_incremented(rowI, elementI, brd), maxBoardRange)
+                             if num not in bannedNums]
                 
-                #go through all nums <the current one + 1; 9>
-                for num in range(get_current_num_incremented(rowI, elementI, brd), maxBoardRange):
+                #go through all nums valid nums
+                for num in validNums:
                     
                     #if the num isn't already on the horizontal or vertical line or in a square
-                    if ((str(num) not in horizontals[rowI])
-                    and (str(num) not in verticals[elementI])
-                    and (str(num) not in squares[get_square_num(rowI, elementI, len(brd))])):
+                    if str(num) not in bannedNums:
 
                         #set the first available num on the spot
                         brd[rowI][elementI] = str(num)
@@ -192,10 +196,6 @@ def step_by_step_sudoku_solve(board, copyBoard=True, correctWrongChars=False):
 
     rowI = elementI = 0
     while True:
-        
-        horizontals = get_horizontal_nums(brd)
-        verticals = get_vertical_nums(brd)
-        squares = get_nums_in_squares(brd)
 
         #if it isn't taken by a constant num
         if brd[rowI][elementI] == emp or brd[rowI][elementI] in possibleNums:
@@ -220,13 +220,22 @@ def step_by_step_sudoku_solve(board, copyBoard=True, correctWrongChars=False):
 
             else:
                 
-                #go through all nums <the current one + 1; 9>
-                for num in range(get_current_num_incremented(rowI, elementI, brd), maxBoardRange):
+                currentHorizontalNums = get_horizontal_nums(brd)[rowI]
+                currentVerticalNums = get_vertical_nums(brd)[elementI]
+                currentSquareNums = get_nums_in_squares(brd)[get_square_num(rowI, elementI, len(brd))]
+
+                bannedNums = currentHorizontalNums | currentVerticalNums | currentSquareNums
+
+                validNums = [num 
+                             for num in range(get_current_num_incremented(rowI, elementI, brd), maxBoardRange)
+                             if num not in bannedNums]
+                
+                #go through all valid nums
+                for num in validNums:
                     
                     #if the num isn't already on the horizontal or vertical line or in a square
-                    if ((str(num) not in horizontals[rowI])
-                    and (str(num) not in verticals[elementI])
-                    and (str(num) not in squares[get_square_num(rowI, elementI, len(brd))])):
+                    if str(num) not in bannedNums:
+
 
                         #set the first available num on the spot
                         brd[rowI][elementI] = str(num)

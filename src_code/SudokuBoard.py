@@ -132,10 +132,6 @@ class SudokuBoard:
 
         rowI = elementI = 0
         while True:
-            
-            horizontals = self.__get_horizontal_nums__(brd)
-            verticals = self.__get_vertical_nums__(brd)
-            squares = self.__get_nums_in_squares__(brd)
 
             #if it isn't taken by a constant num
             if brd[rowI][elementI] == self.__emp__ or brd[rowI][elementI] in self.__possibleNums__:
@@ -157,14 +153,21 @@ class SudokuBoard:
                     elementI = newCoords[1]
 
                 else:
-                    
-                    #go through all nums <the current one + 1; 9>
-                    for num in range(self.__get_current_num_incremented__(rowI, elementI, brd), maxBoardRange):
+                    currentHorizontalNums = self.__get_horizontal_nums__(brd)[rowI]
+                    currentVerticalNums = self.__get_vertical_nums__(brd)[elementI]
+                    currentSquareNums = self.__get_nums_in_squares__(brd)[self.__get_square_num__(rowI, elementI, len(brd))]
+
+                    bannedNums = currentHorizontalNums | currentVerticalNums | currentSquareNums
+
+                    validNums = [num 
+                                 for num in range(self.__get_current_num_incremented__(rowI, elementI, brd), maxBoardRange)
+                                 if num not in bannedNums]
+
+                    #go through all nums valid nums
+                    for num in validNums:
                         
                         #if the num isn't already on the horizontal or vertical line or in a square
-                        if ((str(num) not in horizontals[rowI])
-                        and (str(num) not in verticals[elementI])
-                        and (str(num) not in squares[self.__get_square_num__(rowI, elementI, len(brd))])):
+                        if str(num) not in bannedNums:
 
                             #set the first available num on the spot
                             brd[rowI][elementI] = str(num)
@@ -241,10 +244,6 @@ class SudokuBoard:
         rowI = elementI = 0
         while True:
             
-            horizontals = self.__get_horizontal_nums__(brd)
-            verticals = self.__get_vertical_nums__(brd)
-            squares = self.__get_nums_in_squares__(brd)
-
             #if it isn't taken by a constant num
             if brd[rowI][elementI] == self.__emp__ or brd[rowI][elementI] in possibleNums:
 
@@ -268,13 +267,21 @@ class SudokuBoard:
 
                 else:
                     
-                    #go through all nums <the current one + 1; 9>
-                    for num in range(self.__get_current_num_incremented__(rowI, elementI, brd), maxBoardRange):
+                    currentHorizontalNums = self.__get_horizontal_nums__(brd)[rowI]
+                    currentVerticalNums = self.__get_vertical_nums__(brd)[elementI]
+                    currentSquareNums = self.__get_nums_in_squares__(brd)[self.__get_square_num__(rowI, elementI, len(brd))]
+
+                    bannedNums = currentHorizontalNums | currentVerticalNums | currentSquareNums
+
+                    validNums = [num 
+                                 for num in range(self.__get_current_num_incremented__(rowI, elementI, brd), maxBoardRange)
+                                 if num not in bannedNums]
+
+                    #go through all valid nums
+                    for num in validNums:
                         
                         #if the num isn't already on the horizontal or vertical line or in a square
-                        if ((str(num) not in horizontals[rowI])
-                        and (str(num) not in verticals[elementI])
-                        and (str(num) not in squares[self.__get_square_num__(rowI, elementI, len(brd))])):
+                        if str(num) not in bannedNums:
 
                             #set the first available num on the spot
                             brd[rowI][elementI] = str(num)

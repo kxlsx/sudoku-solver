@@ -134,18 +134,18 @@ boards9=(
 boards12=(
             #0
             (
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp],
-                [emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp,emp]
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ]
                 
             ),
 
@@ -165,4 +165,70 @@ boards12=(
                 [emp ,'4' ,emp ,emp ,emp ,emp ,'3' ,emp ,'2' ,emp ,emp ,emp ]
                 
             ),
+        )
+
+#15x15 boards
+boards15=(  
+            #0
+            (
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+            ),
+
+            #1
+            (
+                [emp ,emp ,emp ,emp ,'13',emp ,emp ,emp ,'7' ,'1' ,emp ,'15',emp ,'10',emp ],
+                [emp ,emp ,'11','5' ,emp ,emp ,emp ,emp ,'4' ,emp ,emp ,emp ,'12',emp ,'7' ],
+                ['10','6' ,emp ,'7' ,emp ,'3' ,'9' ,emp ,emp ,emp ,emp ,emp ,emp ,'2' ,'8' ],
+                ['1' ,emp ,emp ,'14','5' ,emp ,'10',emp ,'3' ,emp ,'11','13','8' ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,'5' ,'1' ,emp ,emp ,'11',emp ,emp ,'10','14',emp ],
+                [emp ,emp ,'10',emp ,emp ,'8' ,'15','13',emp ,emp ,'12',emp ,emp ,emp ,'5' ],
+                ['12',emp ,'8' ,'10',emp ,emp ,emp ,'3' ,emp ,emp ,'2' ,emp ,emp ,emp ,'15'],
+                [emp ,'14',emp ,emp ,emp ,emp ,'2' ,'15','9' ,emp ,emp ,emp ,emp ,'12',emp ],
+                ['5' ,emp ,emp ,emp ,'15',emp ,emp ,'10',emp ,emp ,emp ,'3' ,'7' ,emp ,'14'],
+                ['2' ,emp ,emp ,emp ,'7' ,emp ,emp ,'4' ,'8' ,'10',emp ,emp ,'1' ,emp ,emp ],
+                [emp ,'5' ,'9' ,emp ,emp ,'7' ,emp ,emp ,'2' ,'13',emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,'6' ,'8' ,'3' ,emp ,'11',emp ,'14',emp ,'15','12',emp ,emp ,'2' ],
+                ['14','11',emp ,emp ,emp ,emp ,emp ,emp ,'13','3' ,emp ,'5' ,emp ,'4' ,'9' ],
+                ['9' ,emp ,'13',emp ,emp ,emp ,'4' ,emp ,emp ,emp ,emp ,'7' ,'3' ,emp ,emp ],
+                [emp ,'4' ,emp ,'3' ,emp ,'2' ,'8' ,emp ,emp ,emp ,'10',emp ,emp ,emp ,emp ],
+            )
+         )
+
+#18x18 boards
+boards18=(  
+            #0
+            (
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ],
+                [emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ,emp ]
+            )
         )
