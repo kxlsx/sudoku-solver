@@ -36,7 +36,7 @@ class SudokuBoard:
     def __init__(self, board, difficulty='N/A', emptySpotChar='0', correctWrongChars=False, constMarker='$'):
 
         #char meaning the spot is empty
-        self.__emp__ = emptySpotChar
+        self.emptySpotChar = emptySpotChar
 
 
         #is the given difficulty valid
@@ -58,7 +58,7 @@ class SudokuBoard:
             #general checks if the board is valid for sudoku
             if len(board) % 3 != 0 or len(board) == 0:
                 raise BoardError("Board's size must be a multiple of 3.")
-            elif not(self.__is_board_square__(board)):
+            elif not(self._is_board_square(board)):
                 raise BoardError("Board's row count and row length must be uniform.")
 
             self.board = board
@@ -71,36 +71,72 @@ class SudokuBoard:
                 if difficulty.lower() == 'n/a':
                     self.difficulty = 'medium'
 
-                self.board = self._generate_board_from_api_(self.difficulty)
+                self.board = self._generate_board_from_api(self.difficulty)
             else:
                 raise ArgumentError("Incorrect board command (Try 'random', 'rand' or 'r' to generate a random board).")
         finally:
             #board backup is used to reset the board if needed
-            self.__boardBackup__ = deepcopy(self.board)
+            self._boardBackup = deepcopy(self.board)
 
 
         #numbers that can be used in the board
-        self.__possibleNums__ = tuple([str(i)
+        self._possibleNums = tuple([str(i)
                                 for i in range(1, len(self.board) + 1)])
 
 
         if not(isinstance(correctWrongChars, bool)):
             raise ArgumentError('correctWrongChars must be boolean.')
         
-        self.__correctWrongChars__ = correctWrongChars
+        self._correctWrongChars = correctWrongChars
 
 
         #ensuring the board elements types
-        self.board = self.__ensure_board_types__(self.board, self.__correctWrongChars__)
-        self.__boardBackup__ = self.__ensure_board_types__(self.__boardBackup__, self.__correctWrongChars__)
+        self.board = self._ensure_board_types(self.board, self._correctWrongChars)
+        self._boardBackup = self._ensure_board_types(self._boardBackup, self._correctWrongChars)
 
 
         if constMarker == '':
             raise ArgumentError('constMarker cannot be empty.')
         
         #the constMarker is for constant values that CANNOT be changed by the algorithm
-        self.__constMarker__ = constMarker
+        self._constMarker = constMarker
 
+    def __str__(self):
+        """
+        Returns the stored board as a nice-looking string 
+        """
+
+
+        if self.board == None:
+            return 'No Solution'
+        
+        boardStr = ''
+        for row in self.board:
+            i = 0
+            for element in row:
+                                
+                pelement = element 
+
+                if len(self.board) > 9:
+                    if i == 0 and len(element) == 1:
+                        pelement = ' ' + pelement
+
+                try:
+                    if ((len(element) == 1 and len(row[i + 1]) == 1) or 
+                        (len(element) == 2 and len(row[i + 1]) == 1)):
+                        gap = 2 * ' '
+                    elif ((len(element) == 2 and len(row[i + 1]) == 2) or 
+                          (len(element) == 1 and len(row[i + 1]) == 2)):
+                        gap = ' '
+                except IndexError:
+                    gap = ''
+                
+                boardStr += pelement.replace(self._constMarker,'') + gap
+
+                i+=1
+            boardStr += '\n'
+        
+        return boardStr
 
 
     def solve(self, copyBoard=False):
@@ -123,7 +159,7 @@ class SudokuBoard:
         else:
             brd = self.board
 
-        brd = self.__mark_constants__(brd)
+        brd = self._mark_constants(brd)
 
         maxBoardIndex = len(brd) - 1
         maxBoardRange = len(brd) + 1
@@ -134,16 +170,16 @@ class SudokuBoard:
         while True:
 
             #if it isn't taken by a constant num
-            if brd[rowI][elementI] == self.__emp__ or brd[rowI][elementI] in self.__possibleNums__:
+            if brd[rowI][elementI] == self.emptySpotChar or brd[rowI][elementI] in self._possibleNums:
 
                 #if it had already reached 9 before and it cannot increment further
-                if brd[rowI][elementI] == self.__possibleNums__[-1]:
+                if brd[rowI][elementI] == self._possibleNums[-1]:
                     
                     #reset the spot
-                    brd[rowI][elementI] = self.__emp__
+                    brd[rowI][elementI] = self.emptySpotChar
 
                     #backtrack to the last available spot
-                    newCoords = self.__get_bactrack_coordinates__(rowI, elementI, brd)
+                    newCoords = self._get_bactrack_coordinates(rowI, elementI, brd)
                     if newCoords == None:
 
                         #the board cannot be solved
@@ -153,14 +189,14 @@ class SudokuBoard:
                     elementI = newCoords[1]
 
                 else:
-                    currentHorizontalNums = self.__get_horizontal_nums__(brd)[rowI]
-                    currentVerticalNums = self.__get_vertical_nums__(brd)[elementI]
-                    currentSquareNums = self.__get_nums_in_squares__(brd)[self.__get_square_num__(rowI, elementI, len(brd))]
+                    currentHorizontalNums = self._get_horizontal_nums(brd)[rowI]
+                    currentVerticalNums = self._get_vertical_nums(brd)[elementI]
+                    currentSquareNums = self._get_nums_in_squares(brd)[self._get_square_num(rowI, elementI, len(brd))]
 
                     bannedNums = currentHorizontalNums | currentVerticalNums | currentSquareNums
 
                     validNums = [num 
-                                 for num in range(self.__get_current_num_incremented__(rowI, elementI, brd), maxBoardRange)
+                                 for num in range(self._get_current_num_incremented(rowI, elementI, brd), maxBoardRange)
                                  if num not in bannedNums]
 
                     #go through all nums valid nums
@@ -173,11 +209,11 @@ class SudokuBoard:
                             brd[rowI][elementI] = str(num)
 
                             #go forward a spot
-                            newCoords = self.__get_forward_coordinates__(rowI, elementI, maxBoardIndex)
+                            newCoords = self._get_forward_coordinates(rowI, elementI, maxBoardIndex)
                             if newCoords == None:
 
                                 #final return (with the markers deleted for good measure)
-                                return self.__remove_constant_marks__(brd)
+                                return self._remove_constant_marks(brd)
 
                             rowI     = newCoords[0]
                             elementI = newCoords[1]
@@ -188,10 +224,10 @@ class SudokuBoard:
                         elif (num == maxBoardRange - 1):
 
                             #reset the spot
-                            brd[rowI][elementI] = self.__emp__
+                            brd[rowI][elementI] = self.emptySpotChar
 
                             #backtrack to the last available spot
-                            newCoords = self.__get_bactrack_coordinates__(rowI, elementI, brd)
+                            newCoords = self._get_bactrack_coordinates(rowI, elementI, brd)
                             if newCoords == None:
 
                                 #the board cannot be solved
@@ -204,16 +240,16 @@ class SudokuBoard:
             else:
                 
                 #go forward a spot
-                newCoords = self.__get_forward_coordinates__(rowI, elementI, maxBoardIndex)
+                newCoords = self._get_forward_coordinates(rowI, elementI, maxBoardIndex)
                 if newCoords == None:
 
                     #final return (with the markers deleted for good measure)
-                    return self.__remove_constant_marks__(brd)
+                    return self._remove_constant_marks(brd)
 
                 rowI     = newCoords[0]
                 elementI = newCoords[1]
     
-    def solve_step_by_step(self, copyBoard=False):
+    def gen_solving_step_by_step(self, copyBoard=False):
         """
         solve but it yields the board every time it places or removes a num.
         
@@ -233,7 +269,7 @@ class SudokuBoard:
         else:
             brd = self.board
 
-        brd = self.__mark_constants__(brd)
+        brd = self._mark_constants(brd)
 
         maxBoardIndex = len(brd) - 1
         maxBoardRange = len(brd) + 1
@@ -245,17 +281,17 @@ class SudokuBoard:
         while True:
             
             #if it isn't taken by a constant num
-            if brd[rowI][elementI] == self.__emp__ or brd[rowI][elementI] in possibleNums:
+            if brd[rowI][elementI] == self.emptySpotChar or brd[rowI][elementI] in possibleNums:
 
                 #if it had already reached 9 before and it cannot increment further
                 if brd[rowI][elementI] == possibleNums[-1]:
                     
                     #reset the spot
-                    brd[rowI][elementI] = self.__emp__
-                    yield (self.__remove_constant_marks__(brd), False)
+                    brd[rowI][elementI] = self.emptySpotChar
+                    yield (self._remove_constant_marks(brd), False)
 
                     #backtrack to the last available spot
-                    newCoords = self.__get_bactrack_coordinates__(rowI, elementI, brd)
+                    newCoords = self._get_bactrack_coordinates(rowI, elementI, brd)
                     if newCoords == None:
 
                         #the board cannot be solved
@@ -267,14 +303,14 @@ class SudokuBoard:
 
                 else:
                     
-                    currentHorizontalNums = self.__get_horizontal_nums__(brd)[rowI]
-                    currentVerticalNums = self.__get_vertical_nums__(brd)[elementI]
-                    currentSquareNums = self.__get_nums_in_squares__(brd)[self.__get_square_num__(rowI, elementI, len(brd))]
+                    currentHorizontalNums = self._get_horizontal_nums(brd)[rowI]
+                    currentVerticalNums = self._get_vertical_nums(brd)[elementI]
+                    currentSquareNums = self._get_nums_in_squares(brd)[self._get_square_num(rowI, elementI, len(brd))]
 
                     bannedNums = currentHorizontalNums | currentVerticalNums | currentSquareNums
 
                     validNums = [num 
-                                 for num in range(self.__get_current_num_incremented__(rowI, elementI, brd), maxBoardRange)
+                                 for num in range(self._get_current_num_incremented(rowI, elementI, brd), maxBoardRange)
                                  if num not in bannedNums]
 
                     #go through all valid nums
@@ -285,10 +321,10 @@ class SudokuBoard:
 
                             #set the first available num on the spot
                             brd[rowI][elementI] = str(num)
-                            yield (self.__remove_constant_marks__(brd), True)
+                            yield (self._remove_constant_marks(brd), True)
 
                             #go forward a spot
-                            newCoords = self.__get_forward_coordinates__(rowI, elementI, maxBoardIndex)
+                            newCoords = self._get_forward_coordinates(rowI, elementI, maxBoardIndex)
                             if newCoords == None:
 
                                 #board solved
@@ -303,11 +339,11 @@ class SudokuBoard:
                         elif (num == maxBoardRange - 1):
 
                             #reset the spot
-                            brd[rowI][elementI] = self.__emp__
-                            yield (self.__remove_constant_marks__(brd), False)
+                            brd[rowI][elementI] = self.emptySpotChar
+                            yield (self._remove_constant_marks(brd), False)
 
                             #backtrack to the last available spot
-                            newCoords = self.__get_bactrack_coordinates__(rowI, elementI, brd)
+                            newCoords = self._get_bactrack_coordinates(rowI, elementI, brd)
                             if newCoords == None:
 
                                 #the board cannot be solved
@@ -320,11 +356,11 @@ class SudokuBoard:
             else:
                 
                 #go forward a spot
-                newCoords = self.__get_forward_coordinates__(rowI, elementI, maxBoardIndex)
+                newCoords = self._get_forward_coordinates(rowI, elementI, maxBoardIndex)
                 if newCoords == None:
 
                     #board solved
-                    yield (self.__remove_constant_marks__(brd), False)
+                    yield (self._remove_constant_marks(brd), False)
                     return
 
                 rowI     = newCoords[0]
@@ -335,7 +371,7 @@ class SudokuBoard:
         Prints the stored board to the console
         """
 
-        self.__print_any_board__(self.board)
+        self._print_any_board(self.board)
 
     def print_solving_step_by_step(self, copyBoard=False):
         """
@@ -348,10 +384,10 @@ class SudokuBoard:
 
         board = self.board
 
-        self.__print_any_board__(board)
+        self._print_any_board(board)
         print('Going forward...')
 
-        solveStepByStep = self.solve_step_by_step(copyBoard)
+        solveStepByStep = self.gen_solving_step_by_step(copyBoard)
 
         while True:
             try:
@@ -361,7 +397,7 @@ class SudokuBoard:
                 break
             else:
                 try:
-                    self.__print_any_board__(step[0])
+                    self._print_any_board(step[0])
                 except TypeError:
                     print('No solution!')
                     break
@@ -380,11 +416,11 @@ class SudokuBoard:
         Returns:
             {tuple of lists} -- board given while creating SudokuBoard
         """
-        self.board = deepcopy(self.__boardBackup__)
+        self.board = deepcopy(self._boardBackup)
         return self.board
 
 
-    def _generate_board_from_api_(self, difficulty='medium'):
+    def _generate_board_from_api(self, difficulty='medium'):
         """
         Generates a board (9x9) from berto's API (https://sugoku.herokuapp.com/board)
             His emptySpotChars are '0'!
@@ -404,7 +440,7 @@ class SudokuBoard:
 
         return tuple(generatedBoard)
 
-    def __print_any_board__(self, board):
+    def _print_any_board(self, board):
         """
         Prints the given board.
         
@@ -437,13 +473,13 @@ class SudokuBoard:
                 except IndexError:
                     gap = ''
                 
-                print(pelement.replace(self.__constMarker__,'') + gap, end='')
+                print(pelement.replace(self._constMarker,'') + gap, end='')
 
                 i+=1
             print()
 
 
-    def __get_forward_coordinates__(self, rowI, elementI, maxBoardIndex):
+    def _get_forward_coordinates(self, rowI, elementI, maxBoardIndex):
         """
         Returns the next coordinates (as a tuple) or None
     
@@ -470,7 +506,7 @@ class SudokuBoard:
 
         return (rowI, elementI)
 
-    def __get_bactrack_coordinates__(self, rowI, elementI, board):
+    def _get_bactrack_coordinates(self, rowI, elementI, board):
         """
         Returns the last available coordinates or None.
 
@@ -518,7 +554,7 @@ class SudokuBoard:
         
         return (rowI, elementI)
 
-    def __get_current_num_incremented__(self, rowI, elementI, board):
+    def _get_current_num_incremented(self, rowI, elementI, board):
         """
         It's used to set the lower bound to check for nums
         
@@ -531,7 +567,7 @@ class SudokuBoard:
             {int} -- num placed in the current element + 1 or 1 (if the element is empty) or max num of the board (if the num is equal to the max num) 
         """
 
-        if board[rowI][elementI] == self.__emp__:
+        if board[rowI][elementI] == self.emptySpotChar:
 
             return 1
 
@@ -543,7 +579,7 @@ class SudokuBoard:
 
             return int(board[rowI][elementI]) + 1
 
-    def __get_square_num__(self, rowI, elementI, boardLen):
+    def _get_square_num(self, rowI, elementI, boardLen):
         """
         Returns the square's index, in which are the given coordinates. 
         Squares are marked horizontally starting at the leftmost corner, heading rightwards
@@ -572,7 +608,7 @@ class SudokuBoard:
             else:
                 index += 3
 
-    def __get_horizontal_nums__(self, board):
+    def _get_horizontal_nums(self, board):
         """
         Returns a list of nums in corresponding horizontal lines.
         
@@ -584,14 +620,14 @@ class SudokuBoard:
         """
 
         #pretty much copies the board without blank spaces and const markers
-        horizontals = [{element.replace(self.__constMarker__, '')
+        horizontals = [{element.replace(self._constMarker, '')
                         for element in row
-                        if element != self.__emp__}
+                        if element != self.emptySpotChar}
                     for row in board]
 
         return tuple(horizontals)
 
-    def __get_vertical_nums__(self, board):
+    def _get_vertical_nums(self, board):
         """
         Returns a list of nums in corresponding vertical lines.
         
@@ -609,12 +645,12 @@ class SudokuBoard:
         for elNum in range(len(board)):
             for rowNum in range(len(board)):
                 #adds only nums to save time
-                if board[rowNum][elNum] != self.__emp__:
-                    verticals[elNum].add(board[rowNum][elNum].replace(self.__constMarker__, ''))
+                if board[rowNum][elNum] != self.emptySpotChar:
+                    verticals[elNum].add(board[rowNum][elNum].replace(self._constMarker, ''))
 
         return tuple(verticals)
 
-    def __get_nums_in_squares__(self, board):
+    def _get_nums_in_squares(self, board):
         """
         Returns a list of nums in corresponding squares 
         (they're marked horizontally starting at the leftmost corner, heading rightwards). 
@@ -638,8 +674,8 @@ class SudokuBoard:
             for y in range(squareY - 3, squareY):
                 for x in range(squareX - squareSize, squareX):
                     #adds only nums to save time
-                    if board[y][x] != self.__emp__:
-                        squares[squareNum].add(board[y][x].replace(self.__constMarker__, ''))
+                    if board[y][x] != self.emptySpotChar:
+                        squares[squareNum].add(board[y][x].replace(self._constMarker, ''))
 
             squareX += squareSize
             if squareX > len(board):
@@ -649,7 +685,7 @@ class SudokuBoard:
         return tuple(squares)
 
 
-    def __is_board_square__(self, board):
+    def _is_board_square(self, board):
         """
         Checks whether the board's length is the same as each row's length.
         
@@ -674,7 +710,7 @@ class SudokuBoard:
         except:
             raise BoardError('Board must be two-dimensional.')
 
-    def __mark_constants__(self, board):
+    def _mark_constants(self, board):
         """
         Returns a board with the nums coming pre-set marked with constMarker.
         
@@ -687,12 +723,12 @@ class SudokuBoard:
 
         for row in board:
             for element in row:
-                if element != self.__emp__:
-                    board[board.index(row)][row.index(element)] += self.__constMarker__
+                if element != self.emptySpotChar:
+                    board[board.index(row)][row.index(element)] += self._constMarker
 
         return board
 
-    def __remove_constant_marks__(self, board):
+    def _remove_constant_marks(self, board):
         """
         Returns a board with the constMarkers removed if i'll ever need it.
         
@@ -705,12 +741,12 @@ class SudokuBoard:
 
         for row in board:
             for element in row:
-                if element != self.__emp__:
-                    board[board.index(row)][row.index(element)] = board[board.index(row)][row.index(element)].replace(self.__constMarker__, '')
+                if element != self.emptySpotChar:
+                    board[board.index(row)][row.index(element)] = board[board.index(row)][row.index(element)].replace(self._constMarker, '')
 
         return board
 
-    def __ensure_board_types__(self, board, correctWrongChars=False):
+    def _ensure_board_types(self, board, correctWrongChars=False):
         """
         Ensures the board and its contents contain correct types of elements, if the element isn't a num
         and isn't recognised as an empty char, it interprets it a empty char.
@@ -735,9 +771,9 @@ class SudokuBoard:
 
                 char = str(ensuredBoard[rowI][elementI])
 
-                if char not in self.__possibleNums__ and char != self.__emp__:
+                if char not in self._possibleNums and char != self.emptySpotChar:
                     if correctWrongChars:
-                        char = self.__emp__
+                        char = self.emptySpotChar
                     else:
                         raise BoardError('Unknown char in board')
 
