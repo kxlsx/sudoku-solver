@@ -4,8 +4,7 @@ Module containing the class SudokuBoard used to store, solve or print the given 
 
 from copy import deepcopy
 from requestsJson import get_data_from_json_site
-from exceptions import *
-import sudokuboards
+from sudokuexceptions import *
 
 
 class SudokuBoard:
@@ -71,7 +70,7 @@ class SudokuBoard:
                 if difficulty.lower() == 'n/a':
                     self.difficulty = 'medium'
 
-                self.board = self._generate_board_from_api(self.difficulty)
+                self.board = self.generate_board_from_api(self.difficulty)
             else:
                 raise ArgumentError("Incorrect board command (Try 'random', 'rand' or 'r' to generate a random board).")
         finally:
@@ -419,8 +418,8 @@ class SudokuBoard:
         self.board = deepcopy(self._boardBackup)
         return self.board
 
-
-    def _generate_board_from_api(self, difficulty='medium'):
+    @staticmethod
+    def generate_board_from_api(difficulty='medium'):
         """
         Generates a board (9x9) from berto's API (https://sugoku.herokuapp.com/board)
             His emptySpotChars are '0'!
@@ -439,6 +438,7 @@ class SudokuBoard:
         generatedBoard = get_data_from_json_site(boardGeneratorApiURL, params={'difficulty': difficulty})['board']
 
         return tuple(generatedBoard)
+
 
     def _print_any_board(self, board):
         """
@@ -685,31 +685,6 @@ class SudokuBoard:
         return tuple(squares)
 
 
-    def _is_board_square(self, board):
-        """
-        Checks whether the board's length is the same as each row's length.
-        
-        Arguments:
-            board {a tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
-        
-        Raises:
-            BoardError: Board must be two-dimensional.
-        
-        Returns:
-            {bool}
-        """
-        
-        try:
-
-            for row in board:
-                if len(board) != len(row):
-                    return False
-
-            return True
-
-        except:
-            raise BoardError('Board must be two-dimensional.')
-
     def _mark_constants(self, board):
         """
         Returns a board with the nums coming pre-set marked with constMarker.
@@ -786,3 +761,28 @@ class SudokuBoard:
 
         
         return tuple(ensuredBoard)
+
+    def _is_board_square(self, board):
+        """
+        Checks whether the board's length is the same as each row's length.
+        
+        Arguments:
+            board {a tuple of lists} -- the tuple contains lists(rows), and the lists contain the actual elements
+        
+        Raises:
+            BoardError: Board must be two-dimensional.
+        
+        Returns:
+            {bool}
+        """
+        
+        try:
+
+            for row in board:
+                if len(board) != len(row):
+                    return False
+
+            return True
+
+        except:
+            raise BoardError('Board must be two-dimensional.')
