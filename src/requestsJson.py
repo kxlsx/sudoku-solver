@@ -5,20 +5,20 @@ import json
 def get_data_from_json_site(siteURL, endpoints='', params='', headers=''):
     """
     Fetches json data from URL and converts it to python data structures.
-    
+
     Arguments:
         siteURL {str}
-    
+
     Keyword Arguments:
         endpoints {str} (default: {''})
         params {dict} (default: {''})
         headers {dict} (default: {''})
-    
+
     Raises:
         ConnectionError: Cannot connect to site.
         ConnectionError: Incorrect file format.
         AttributeError: Headers must be a dictionary.
-    
+
     Returns:
         {any} -- data from the site
     """
@@ -35,7 +35,7 @@ def get_data_from_json_site(siteURL, endpoints='', params='', headers=''):
     if not(site_available(site)):
         raise ConnectionError('Cannot connect to site.')
 
-    
+
     try:
         data = site.json()
 
@@ -45,21 +45,22 @@ def get_data_from_json_site(siteURL, endpoints='', params='', headers=''):
     else:
         return data
 
+
 def post_json_data_to_site(data, siteURL, endpoints='', headers=''):
     """
     Posts data as json to the given URL.
-    
+
     Arguments:
         data {any} -- data to post
         siteURL {str} -- [description]
-    
+
     Keyword Arguments:
         endpoints {str} -- [description] (default: {''})
         headers {str} -- [description] (default: {''})
-    
+
     Raises:
         AttributeError: Headers must be a dictionary
-    
+
     Returns:
         {any} -- site's response
     """
@@ -67,29 +68,30 @@ def post_json_data_to_site(data, siteURL, endpoints='', headers=''):
     siteURL += get_endpoints_for_url(*endpoints)
     if headers != '':
         try:
-            response =requests.post(siteURL, headers=headers, json=data)
+            response = requests.post(siteURL, headers=headers, json=data)
         except AttributeError:
             raise AttributeError('Headers must be a dictionary')
     else:
         response = requests.post(siteURL, json=data)
-    
+
     return response
+
 
 def delete_json_data_from_site(siteURL, endpoints='', params='', headers=''):
     """
     Sends a delete request to the given URL.
-    
+
     Arguments:
-        siteURL {str} -- 
-    
+        siteURL {str}
+
     Keyword Arguments:
         endpoints {str} (default: {''})
         params {str} (default: {''})
         headers {dict} (default: {''})
-    
+
     Raises:
          AttributeError: Headers must be a dictionary
-    
+
     Returns:
         {any} -- site's response
     """
@@ -102,7 +104,7 @@ def delete_json_data_from_site(siteURL, endpoints='', params='', headers=''):
             raise AttributeError('headers must be a dictionary')
     else:
         response = requests.post(siteURL)
-    
+
     return response
 
 
@@ -112,7 +114,7 @@ def get_endpoints_for_url(*endpoints):
 
     Arguments:
         endpoints {str or tuple}
-    
+
     Returns:
         {str} -- endpoints ready to add to an URL
     """
@@ -140,13 +142,14 @@ def get_endpoints_for_url(*endpoints):
 
     return formedEndpoints
 
+
 def get_params_for_url(params):
     """
     Returns a string of parameters to add to an URL.
-    
+
     Arguments:
         params {dict}
-    
+
     Returns:
         {str} -- parameters ready to add to an URL
     """
@@ -155,7 +158,7 @@ def get_params_for_url(params):
 
     try:
         paramsItems = params.items()
-        
+
     except AttributeError:
         formedParams = ''
 
@@ -167,48 +170,51 @@ def get_params_for_url(params):
 
             if i != maxi:
                 formedParams += '&'
-        
+
             i += 1
     finally:
         return formedParams
 
+
 def get_url_with_params(siteURL, params):
     """
     Returns an URL with added parameters.
-    
+
     Arguments:
-        siteURL {str} 
+        siteURL {str}
         params {dict}
-    
+
     Returns:
         {str} -- URL with parameters
     """
 
     return siteURL + get_params_for_url(params)
 
+
 def get_url_with_endpoints(siteURL, *endpoints):
     """Returns an URL with added endpoints.
-    
+
     Arguments:
         siteURL {str}
         endpoints {str or tuple}
-    
+
     Returns:
         {str} -- URL with endpoints
     """
 
     return siteURL + get_endpoints_for_url(*endpoints)
 
+
 def get_url_with_endpoints_and_params(siteURl, params, *endpoints):
     """
     Returns an URL with added both endpoints and parameters.
-    
+
     Arguments:
-        siteURL {str} 
+        siteURL {str}
         params {dict}
         endpoints {str or tuple}
 
-    
+
     Returns:
         {str} -- URL with endpoints and parameters
     """
@@ -219,16 +225,16 @@ def get_url_with_endpoints_and_params(siteURl, params, *endpoints):
 def site_available(site=None, siteURL='', endpoints='', params=''):
     """
     Checks whether the given site is available (you can either give it an URL or a full site).
-    
+
     Keyword Arguments:
         site {site object} -- site you want to connect with (default: {None})
         siteURL {str} -- site URL you want to connect with (default: {''})
         endpoints {str} (default: {''})
         params {str} (default: {''})
-    
+
     Raises:
         ConnectionError: No site or siteURL given.
-    
+
     Returns:
         {bool}
     """
@@ -236,7 +242,7 @@ def site_available(site=None, siteURL='', endpoints='', params=''):
     if siteURL != '':
         site = requests.get(siteURL + get_endpoints_for_url(*endpoints) + get_params_for_url(params))
     else:
-        if site == None:
+        if not(site):
             raise ConnectionError('No site or siteURL given')
 
     if site.status_code == 200:
@@ -251,14 +257,14 @@ class ConnectionError(Exception):
     """
 
     def __init__(self, *args):
-        
+
         if args:
             self.message = args[0]
         else:
             self.message = None
 
-    def __str__ (self):
-        print('Exception has occured: ConnectionError')
+    def __str__(self):
+        print('Exception has ocurred: ConnectionError')
         if self.message:
             return '{0}'.format(self.message)
         else:
