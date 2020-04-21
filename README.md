@@ -3,8 +3,8 @@ Simple sudoku solver in python using the <i>backtracking algorithm</i> (a bit mo
 (currently only text based))
 <br/><br/>
 <b>Controls</b><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r -> generate a random board
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; esc -> reset current board
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r -> generate a random board </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; esc -> reset current board</br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; space -> solve the board
 </br></br>
 <b>Files:</b></br>
