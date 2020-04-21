@@ -1,6 +1,6 @@
 # sudoku-solver
 Simple sudoku solver in python using the <i>backtracking algorithm</i> (a bit modified)<br/>
-(currently only text based))</br></br>
+GUI made in Pygame</br></br>
 <b>Controls</b><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r -> generate a random board </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; esc -> reset current board</br>
