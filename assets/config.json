@@ -1,0 +1,16 @@
+{
+    "colors":{
+        "cell":[255, 255, 255],
+        "cellBorder": [120, 120, 120],
+        "cellHover": [232, 255, 255],
+        "squares": [0, 0, 0],
+        "text": [0, 0, 0],
+        "validTextColor": [0, 200, 0],
+        "invalidTextColor": [255, 0, 0]
+    },
+    "resolution": [594, 594],
+    "cellSize": [66, 66],
+    "textSize": 48,
+    "framerate": 50,
+    "difficulty": "medium"
+}
