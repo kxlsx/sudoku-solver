@@ -2,7 +2,7 @@
 Simple sudoku solver in python using the <i>backtracking algorithm</i> (a bit modified)<br/>
 (currently only text based))<br/><br/>
 
-<u>Files</u></br>
+<b>Files:</b></br>
 <i><b>src:</b></i><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;run <b>sudoku-solver.pyw</b> to play.</br></br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i><b>sudoku:</b></i><br/>
