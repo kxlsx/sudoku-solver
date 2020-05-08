@@ -4,8 +4,8 @@ import os
 
 
 def get_options() -> list:
-    optionsPath = os.path.abspath(os.path.dirname(__file__))[:-3] + r'\assets\config.json'
-    iconPath = os.path.abspath(os.path.dirname(__file__))[:-3] + r'\assets\icon.ico'
+    optionsPath = os.path.abspath(os.path.dirname(__file__))[:-3] + '/assets/config.json'
+    iconPath = os.path.abspath(os.path.dirname(__file__))[:-3] + '/assets/icon.ico'
 
     try:
         with open(optionsPath, 'r') as optionsFile:
