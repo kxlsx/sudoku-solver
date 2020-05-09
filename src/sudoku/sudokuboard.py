@@ -293,8 +293,8 @@ class SudokuBoard:
                 # if it had already reached 9 before and it cannot increment further
                 if brd[rowI][elementI] == possibleNums[-1]:
 
-                    yield MoveResult((rowI, elementI), False, self._remove_constant_marks(brd, True),
-                                     self.difficulty, self.emptySpotChar, False, self._constMarker)
+                    yield self._MoveResult((rowI, elementI), False, self._remove_constant_marks(brd, True),
+                                           self.difficulty, self.emptySpotChar, False, self._constMarker)
                     # reset the spot
                     brd[rowI][elementI] = self.emptySpotChar
 
@@ -327,8 +327,8 @@ class SudokuBoard:
                         # if the num isn't already on the horizontal or vertical line or in a square
                         if str(num) not in bannedNums:
 
-                            yield MoveResult((rowI, elementI), True, self._remove_constant_marks(brd, True),
-                                             self.difficulty, self.emptySpotChar, False, self._constMarker)
+                            yield self._MoveResult((rowI, elementI), True, self._remove_constant_marks(brd, True),
+                                                   self.difficulty, self.emptySpotChar, False, self._constMarker)
                             # set the first available num on the spot
                             brd[rowI][elementI] = str(num)
 
@@ -337,8 +337,8 @@ class SudokuBoard:
                             if not(newCoords):
 
                                 # board solved
-                                yield MoveResult((rowI, elementI), True, self._remove_constant_marks(brd),
-                                                 self.difficulty, self.emptySpotChar, False, self._constMarker)
+                                yield self._MoveResult((rowI, elementI), True, self._remove_constant_marks(brd),
+                                                       self.difficulty, self.emptySpotChar, False, self._constMarker)
                                 return
 
                             rowI = newCoords[0]
@@ -349,8 +349,8 @@ class SudokuBoard:
                         # if none of the spots are available
                         elif (num == maxBoardRange - 1):
 
-                            yield MoveResult((rowI, elementI), False, self._remove_constant_marks(brd, True),
-                                             self.difficulty, self.emptySpotChar, False, self._constMarker)
+                            yield self._MoveResult((rowI, elementI), False, self._remove_constant_marks(brd, True),
+                                                   self.difficulty, self.emptySpotChar, False, self._constMarker)
                             # reset the spot
                             brd[rowI][elementI] = self.emptySpotChar
 
@@ -373,8 +373,8 @@ class SudokuBoard:
                 if not(newCoords):
 
                     # board solved
-                    yield MoveResult((rowI, elementI), True, self._remove_constant_marks(brd),
-                                     self.difficulty, self.emptySpotChar, False, self._constMarker)
+                    yield self._MoveResult((rowI, elementI), True, self._remove_constant_marks(brd),
+                                           self.difficulty, self.emptySpotChar, False, self._constMarker)
                     return
 
                 rowI = newCoords[0]
@@ -796,9 +796,9 @@ class SudokuBoard:
         return True
 
 
-class MoveResult:
-    def __init__(self, changed_coords, isValid, board, *boardAttr):
-        self.board = SudokuBoard(board, *boardAttr)
+    class _MoveResult:
+        def __init__(self, changed_coords, isValid, board, *boardAttr):
+            self.board = SudokuBoard(board, *boardAttr)
 
-        self.isValid = isValid
-        self.changed_coords = changed_coords
+            self.isValid = isValid
+            self.changed_coords = changed_coords
