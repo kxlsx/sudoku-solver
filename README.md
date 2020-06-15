@@ -2,9 +2,11 @@
 Simple sudoku solver in python using the <i>backtracking algorithm</i> (a bit modified).<br/>
 GUI made in Pygame. (GUI shows a random board and solves it)</br></br>
 <b>Controls</b><br/>
+```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r -> display a random board </br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; esc -> reset current board</br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; space -> solve the board</br></br>
+```
 <b>Files:</b></br>
 <i><b>src:</b></i><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- run <b>sudoku-solver.pyw</b> to play.</br></br>
