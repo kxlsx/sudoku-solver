@@ -1,16 +1,42 @@
 # sudoku-solver
-Simple sudoku solver in python using the <i>backtracking algorithm</i> (a bit modified).<br/>
-GUI made in Pygame. (GUI shows a random board and solves it)</br></br>
-<b>Controls</b><br/>
-```
-r -> display a random board
-esc -> reset current board
-space -> solve the board
-```
-<b>Files:</b></br>
-<i><b>src:</b></i><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- run <b>main.pyw</b></br></br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i><b>sudoku:</b></i><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>sudoku.py</b>    -> module containing methods to solve sudoku, print it to the console or generate it using this API: https://github.com/berto/sugoku<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>sudokuboard.py</b>  -> Module containing the class SudokuBoard used to store, solve or print the given board (board can be generated as well by passing 'r', 'rand' or 'random' as board while creating the object)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>sudokusamples.py</b> -> module containing a couple of example boards<br/>
+A simple visualisation of solving sudoku boards with a *backtracking algorithm*.
+Sudoku boards are generated using [**suGOku API**](https://github.com/berto/sugoku).
+GUI made in [**Pygame**](https://github.com/pygame/pygame).
+
+## What does it do?
+
+ - You can generate a random board and see it solved visually in the GUI
+ - The actual algorithm is situated in the [/src/sudoku](https://github.com/k-xlsx/sudoku-solver/tree/master/src/sudoku) package in either the [sudoku module](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudoku.py) or the [sudokuboard module](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudokuboard.py), the latter being an OOP approach which I actually recommend over the functional version 
+ - That's it actually, but I may some day add custom sudoku boards and solving them "by hand".
+## GUI controls
+|Key| Function |
+|--|--|
+| r | Display random board |
+| esc | Reset the current board |
+| space | Show solving the board |
+
+## Files
+
+	/assets
+		config.json						// config file for colours and such
+		icon.ico
+	/src
+		/sudoku
+			__init__.py
+			requestsJson.py
+			sudoku.py					// module containing methods solving sudoku
+			sudokuboard.py				// module containing the SudokuBoard object
+			sudokuexceptions.py
+			sudokusamples.py			// module containing some sample sudoku boards
+		grid.py
+		main.pyw						// module to run GUI
+		options.py
+		screens.py
+		sudokugrid.py
+## Cool SudokuBoard object methods
+See their individual docstrings for explanations.
+ - [solve](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudokuboard.py#L150)
+ - [gen_solving_step_by_step](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudokuboard.py#L262) 
+ - [print_board](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudokuboard.py#L383)
+ - [print_solving_step_by_step](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudokuboard.py#L390)
+ - [reset_board](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudokuboard.py#L426)
