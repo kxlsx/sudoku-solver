@@ -33,6 +33,7 @@ GUI made in [**Pygame**](https://github.com/pygame/pygame).
 		options.py
 		screens.py
 		sudokugrid.py
+	README.MD
 ## Cool SudokuBoard object methods
 See their individual docstrings for explanations.
  - [solve](https://github.com/k-xlsx/sudoku-solver/blob/master/src/sudoku/sudokuboard.py#L150)
