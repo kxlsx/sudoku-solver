@@ -25,9 +25,9 @@ GUI made in [**Pygame**](https://github.com/pygame/pygame).
 			__init__.py
 			requestsJson.py
 			sudoku.py					// module containing methods solving sudoku
-			sudokuboard.py				// module containing the SudokuBoard object
+			sudokuboard.py					// module containing the SudokuBoard object
 			sudokuexceptions.py
-			sudokusamples.py			// module containing some sample sudoku boards
+			sudokusamples.py				// module containing some sample sudoku boards
 		grid.py
 		main.pyw						// module to run GUI
 		options.py
